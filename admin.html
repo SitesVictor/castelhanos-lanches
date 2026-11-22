@@ -84,6 +84,26 @@
   .toast.on { opacity:1; transform:translateX(-50%); }
   .aviso { font-size:.78rem; opacity:.7; text-align:center; margin:.5rem 0 1rem; }
   [hidden] { display:none !important; }
+
+  /* ===== Computador ===== */
+  @media (min-width: 900px) {
+    .topo { padding:1.3rem 2rem 3.6rem; }
+    .topo .in, main { max-width:940px; }
+    .topo h1 { font-size:2.1rem; }
+    main { margin-top:-2.6rem; }
+    #aba-loja { display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start; }
+    #aba-loja .status { margin-bottom:0; padding:2.2rem 1rem; }
+    #aba-loja .status .grande { font-size:2.8rem; }
+    #aba-loja .aviso { grid-column:1/-1; }
+    #fecharForm { margin-bottom:0; }
+    #lista { column-count:2; column-gap:2.5rem; }
+    .linha { break-inside:avoid; }
+    .cat { break-after:avoid; }
+    nav { left:50%; right:auto; width:520px; transform:translateX(-50%); border-radius:18px 18px 0 0; }
+    nav button { font-size:.85rem; padding:.8rem .3rem .7rem; }
+    nav button:hover { background:#fbf1d9; }
+    .toast { bottom:6rem; }
+  }
 </style>
 </head>
 <body>
