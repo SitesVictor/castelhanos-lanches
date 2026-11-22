@@ -235,6 +235,9 @@
   </div>
 </dialog>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="fb.js"></script>
 <script src="dados.js"></script>
 <script>
   // ===== CONFIGURAÇÃO =====
@@ -255,7 +258,8 @@
   const itens = {};           // id -> {n,nome,desc,preco}
   const qtd = {};             // id -> quantidade
 
-  const ESG = (lerLoja().esgotados || []);
+  let LOJA = (() => { try { return JSON.parse(localStorage.getItem("cl_loja") || "{}"); } catch(e) { return {}; } })();
+  let ESG = (lerLoja().esgotados || []);
 
   // Renderiza cardápio
   $("#menu").innerHTML = CATEGORIAS.map(c => `<a href="#${c.id}">${c.nome}</a>`).join("") + `<a href="#entrega">Entrega</a>`;
@@ -361,8 +365,27 @@
       `*Pagamento:* ${$("#pag").value}` + ($("#pag").value==="Dinheiro" && $("#troco").value.trim() ? ` (troco para ${$("#troco").value.trim()})` : ""),
       $("#obs").value.trim() ? `*Obs.:* ${$("#obs").value.trim()}` : null
     ].filter(l => l !== null);
+    salvarPedido(ent);
     window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(linhas.join("\n"))}`, "_blank");
   };
+
+  // Guarda o pedido no painel da loja (Firebase)
+  function salvarPedido(ent) {
+    if (!DB) return;
+    try {
+      const its = lista().flatMap(i => i.cat==="Bebidas"
+        ? [{ nome:i.nome, cat:i.cat, preco:i.preco, q:i.q }]
+        : (mods[i.id]||[]).map(u => ({ n:i.n, nome:i.nome, cat:i.cat, preco:i.preco, q:1, sem:u.sem||[], txt:(u.txt||"").trim() })));
+      const p = {
+        ts: Date.now(), status:"ativo", itens: its,
+        subtotal: subtotal(), taxa: taxa(), total: subtotal()+taxa(),
+        tipo: ent ? "entrega" : "retirada", nome: $("#nome").value.trim(),
+        pag: $("#pag").value, troco: $("#pag").value==="Dinheiro" ? $("#troco").value.trim() : "", obs: $("#obs").value.trim()
+      };
+      if (ent) { p.end = $("#end").value.trim(); p.bairro = TAXAS[$("#bairro").value][0]; }
+      DB.ref("pedidos").push(p);
+    } catch(e) { console.warn("Não salvou o pedido", e); }
+  }
 
   // ===== Personalização por lanche =====
   const mods = {};   // id -> [{ sem:[], txt:"" }, ...] (um por unidade pedida)
@@ -458,7 +481,7 @@
   });
 
   // Aberto / fechado (lê o que o funcionário configurou em admin.html)
-  function lerLoja() { try { return JSON.parse(localStorage.getItem("cl_loja") || "{}"); } catch(e) { return {}; } }
+  function lerLoja() { return LOJA; }
   function lojaFechada() { const c = lerLoja(); return !!c.fechado && (!c.ate || Date.now() < c.ate); }
   function statusLoja() {
     const cfg = lerLoja(), H = HORARIO, el = $("#status");
@@ -486,6 +509,22 @@
     el.innerHTML = `<i></i>${aberto ? "Aberto agora" : "Fechado no momento"}` + (hoje ? ` · hoje ${hoje[0]} às ${hoje[1]}` : " · hoje não abrimos");
   }
   statusLoja(); setInterval(statusLoja, 60000);
+
+  // Estado da loja em tempo real (fechada / esgotados), vindo do Firebase
+  function aplicarEsg() {
+    ESG = Array.isArray(LOJA.esgotados) ? LOJA.esgotados : Object.values(LOJA.esgotados || {});
+    for (const id in itens) {
+      itens[id].esg = ESG.includes(id);
+      const el = $("#q-"+id); if (el) el.closest(".item").classList.toggle("esgotado", itens[id].esg);
+      if (itens[id].esg && qtd[id]) { delete qtd[id]; delete mods[id]; }
+    }
+    atualizar();
+  }
+  if (DB) DB.ref("loja").on("value", snap => {
+    LOJA = snap.val() || {};
+    try { localStorage.setItem("cl_loja", JSON.stringify(LOJA)); } catch(e) {}
+    statusLoja(); aplicarEsg();
+  });
 
   // Lembra pedido e dados do cliente
   try {

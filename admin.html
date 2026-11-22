@@ -126,6 +126,21 @@
     .toast { bottom:2rem; left:calc(50% + 125px); }
     main > .aviso { text-align:left; }
   }
+  .diaNav { display:flex; gap:.5rem; align-items:center; margin-bottom:1rem; }
+  .diaNav input { flex:1; margin:0; }
+  .diaNav .btn { width:3rem; margin:0; padding:.6rem 0; font-size:1.4rem; }
+  .k3 { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; }
+  .k3 .kpi b { font-size:1.5rem; }
+  .ped { background:#fff; border-radius:14px; padding:1rem 1.1rem; margin-bottom:.8rem; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  .ped.canc { opacity:.6; }
+  .ped.canc .pt b { text-decoration:line-through; }
+  .ped .pt { display:flex; justify-content:space-between; gap:.6rem; font-size:1.05rem; }
+  .ped small { opacity:.7; font-weight:700; }
+  .ped ul { margin:.5rem 0 .3rem 1.1rem; font-size:.92rem; }
+  .ped li small { display:block; }
+  .ped .badge { display:inline-block; background:#8b1a1a; color:#fff; border-radius:999px; font-size:.7rem; font-weight:800; padding:.1rem .6rem; margin-left:.4rem; }
+  .ped .acao { margin-top:.5rem; width:auto; padding:.5rem 1rem; font-size:.9rem; }
+  @media (min-width:900px) { #pedidos { columns:2; column-gap:1.2rem; } .ped { break-inside:avoid; } }
 </style>
 </head>
 <body>
@@ -134,7 +149,7 @@
 <div id="login" class="card" hidden>
   <h2>Painel da loja</h2>
   <p class="sub">Castelhanos Lanches</p>
-  <input type="text" id="usuario" placeholder="Usuário" autocomplete="username" autocapitalize="none">
+  <input type="email" id="usuario" placeholder="E-mail" autocomplete="username" autocapitalize="none">
   <div class="senha">
     <input type="password" id="pin" placeholder="Senha" autocomplete="current-password">
     <button type="button" id="ver" aria-label="Mostrar senha">👁</button>
@@ -206,6 +221,24 @@
       </div>
     </section>
 
+    <!-- ABA PEDIDOS -->
+    <section id="aba-pedidos" hidden>
+      <div class="card">
+        <div class="diaNav">
+          <button class="btn claro" id="diaAnt" aria-label="Dia anterior">‹</button>
+          <input type="date" id="dia">
+          <button class="btn claro" id="diaProx" aria-label="Próximo dia">›</button>
+        </div>
+        <div class="kpis k3">
+          <div class="kpi"><b id="pFat">R$ 0,00</b><span>faturamento</span></div>
+          <div class="kpi"><b id="pQtd">0</b><span>pedidos</span></div>
+          <div class="kpi"><b id="pTkt">R$ 0,00</b><span>ticket médio</span></div>
+        </div>
+        <p class="sub" id="pCanc"></p>
+      </div>
+      <div id="pedidos"></div>
+    </section>
+
     <!-- ABA HISTÓRICO -->
     <section id="aba-hist" hidden>
       <div class="card">
@@ -214,32 +247,33 @@
       </div>
     </section>
 
-    <p class="aviso">As alterações ficam salvas só neste aparelho e navegador.</p>
+    <p class="aviso">Tudo é salvo online e aparece em tempo real para os clientes.</p>
   </main>
 
   <nav>
     <button class="on" data-aba="loja"><span>🏪</span>Loja</button>
     <button data-aba="cardapio"><span>🍔</span>Cardápio</button>
+    <button data-aba="pedidos"><span>🧾</span>Pedidos</button>
     <button data-aba="hist"><span>🕒</span>Histórico</button>
   </nav>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="fb.js"></script>
 <script src="dados.js"></script>
 <script>
-  // ===== CONFIGURAÇÃO =====
-  const USUARIO = "admin";
-  const SENHA = "Hamburguer123"; // proteção simples: fica visível no código, não é segurança forte
-  // ========================
-
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
-  const ler = () => { try { return JSON.parse(localStorage.getItem("cl_loja") || "{}"); } catch(e) { return {}; } };
-  const gravar = c => { try { localStorage.setItem("cl_loja", JSON.stringify(c)); } catch(e) { alert("Não foi possível salvar neste navegador."); } };
+  let LOJA = {};
+  const ler = () => JSON.parse(JSON.stringify(LOJA));
+  const gravar = c => { LOJA = c; if (DB) DB.ref("loja").set(c).catch(() => alert("Não foi possível salvar. Verifique a internet e o login.")); };
   const hora = ts => new Date(ts).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
   const dataHora = ts => new Date(ts).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
-  const TITULOS = { loja:["Loja","Controle se a loja está recebendo pedidos"], cardapio:["Cardápio","Marque o que acabou para não receber pedido"], hist:["Histórico","Tudo que foi feito neste painel"] };
+  const TITULOS = { loja:["Loja","Controle se a loja está recebendo pedidos"], cardapio:["Cardápio","Marque o que acabou para não receber pedido"], hist:["Histórico","Tudo que foi feito neste painel"], pedidos:["Pedidos","Pedidos do dia e faturamento"] };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
   function toast(t) { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.remove("on"), 2200); }
@@ -249,21 +283,30 @@
   // ----- login -----
   function mostrar(logado) { $("#login").hidden = logado; $("#painel").hidden = !logado; if (logado) desenhar(); }
   function entrar() {
-    if ($("#usuario").value.trim().toLowerCase() !== USUARIO || $("#pin").value !== SENHA) { $("#erro").textContent = "Usuário ou senha incorretos."; return; }
-    try { sessionStorage.setItem("cl_adm", "1"); } catch(e) {}
-    $("#erro").textContent = ""; mostrar(true);
+    $("#erro").textContent = "";
+    if (!DB) { $("#erro").textContent = "Sem conexão com o servidor."; return; }
+    firebase.auth().signInWithEmailAndPassword($("#usuario").value.trim(), $("#pin").value)
+      .catch(() => { $("#erro").textContent = "E-mail ou senha incorretos."; });
   }
   $("#entrar").onclick = entrar;
   $("#pin").addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
   $("#ver").onclick = () => { const p = $("#pin"); p.type = p.type === "password" ? "text" : "password"; };
-  $("#sair").onclick = () => { try { sessionStorage.removeItem("cl_adm"); } catch(e) {} $("#pin").value = ""; mostrar(false); };
-  let logado = false; try { logado = !!sessionStorage.getItem("cl_adm"); } catch(e) {}
-  mostrar(logado);
+  $("#sair").onclick = () => { $("#pin").value = ""; firebase.auth().signOut(); };
+  mostrar(false);
+  let ligado = false;
+  if (DB) firebase.auth().onAuthStateChanged(u => {
+    mostrar(!!u);
+    if (u && !ligado) {
+      ligado = true;
+      DB.ref("loja").on("value", snap => { LOJA = snap.val() || {}; desenhar(); });
+    }
+    if (!u) { ligado = false; DB.ref("loja").off(); desligarPedidos(); }
+  });
 
   // ----- abas -----
   $$("nav button").forEach(b => b.onclick = () => {
     $$("nav button").forEach(x => x.classList.toggle("on", x === b));
-    ["loja","cardapio","hist"].forEach(a => $("#aba-"+a).hidden = a !== b.dataset.aba);
+    ["loja","cardapio","hist","pedidos"].forEach(a => $("#aba-"+a).hidden = a !== b.dataset.aba);
     desenhar();
   });
 
@@ -341,6 +384,57 @@
     $("#hist").innerHTML = l.length ? l.map(x => `<div class="log">${esc(x.txt)}<small>${dataHora(x.t)}</small></div>`).join("") : `<div class="vazio">Nenhuma ação registrada ainda.</div>`;
   }
 
+  // ----- pedidos -----
+  const brl = v => Number(v||0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+  const ymd = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  let refPed = null, PEDS = {}, primeira = true;
+  function desligarPedidos() { if (refPed) refPed.off(); refPed = null; PEDS = {}; primeira = true; }
+  function carregarPedidos() {
+    if (!DB || !firebase.auth().currentUser) return;
+    desligarPedidos();
+    const [a,m,d] = $("#dia").value.split("-").map(Number);
+    const ini = new Date(a, m-1, d).getTime(), fim = ini + 86400000 - 1;
+    refPed = DB.ref("pedidos").orderByChild("ts").startAt(ini).endAt(fim);
+    refPed.on("value", snap => {
+      const novo = snap.val() || {};
+      if (!primeira && Object.keys(novo).length > Object.keys(PEDS).length && $("#dia").value === ymd(new Date())) toast("🔔 Novo pedido!");
+      primeira = false; PEDS = novo; desenharPedidos();
+    }, () => { $("#pedidos").innerHTML = `<div class="vazio">Não foi possível carregar os pedidos.</div>`; });
+  }
+  function textoPedido(p) {
+    return (p.itens || []).map(i => {
+      const extra = [...(i.sem||[]).map(x => "sem " + x), i.txt].filter(Boolean).join("; ");
+      return `<li>${i.q > 1 ? i.q + "x " : ""}${i.n ? esc(i.n) + " - " : ""}${esc(i.nome)}${extra ? `<small>↳ ${esc(extra)}</small>` : ""}</li>`;
+    }).join("");
+  }
+  function desenharPedidos() {
+    const l = Object.entries(PEDS).map(([id,p]) => ({ id, ...p })).sort((x,y) => y.ts - x.ts);
+    const ok = l.filter(p => p.status !== "cancelado"), canc = l.length - ok.length;
+    const fat = ok.reduce((s,p) => s + (p.total||0), 0);
+    $("#pFat").textContent = brl(fat); $("#pQtd").textContent = ok.length;
+    $("#pTkt").textContent = brl(ok.length ? fat / ok.length : 0);
+    $("#pCanc").textContent = canc ? `${canc} pedido${canc === 1 ? "" : "s"} cancelado${canc === 1 ? "" : "s"} (não entra no faturamento)` : "Faturamento = soma dos totais (inclui taxa de entrega).";
+    $("#pedidos").innerHTML = l.length ? l.map(p => `<div class="ped ${p.status === "cancelado" ? "canc" : ""}">
+      <div class="pt"><b>${hora(p.ts)} · ${esc(p.nome || "")}${p.status === "cancelado" ? `<span class="badge">CANCELADO</span>` : ""}</b><b>${brl(p.total)}</b></div>
+      <small>${p.tipo === "entrega" ? "Entrega — " + esc(p.end || "") + " (" + esc(p.bairro || "") + ")" : "Retirada"} · ${esc(p.pag || "")}${p.troco ? " (troco p/ " + esc(p.troco) + ")" : ""}</small>
+      <ul>${textoPedido(p)}</ul>
+      ${p.obs ? `<small>Obs.: ${esc(p.obs)}</small><br>` : ""}
+      <button class="btn claro acao" data-pid="${p.id}" data-canc="${p.status === "cancelado" ? 0 : 1}">${p.status === "cancelado" ? "Reativar pedido" : "Cancelar pedido"}</button>
+    </div>`).join("") : `<div class="vazio">Nenhum pedido neste dia.</div>`;
+  }
+  $("#pedidos").addEventListener("click", e => {
+    const b = e.target.closest("[data-pid]"); if (!b) return;
+    const cancelar = b.dataset.canc === "1";
+    if (cancelar && !confirm("Cancelar este pedido? Ele deixa de contar no faturamento.")) return;
+    DB.ref("pedidos/" + b.dataset.pid + "/status").set(cancelar ? "cancelado" : "ativo")
+      .then(() => { const c = ler(); registrar(c, (cancelar ? "Cancelou" : "Reativou") + " pedido de " + (PEDS[b.dataset.pid] || {}).nome); gravar(c); toast(cancelar ? "Pedido cancelado" : "Pedido reativado"); })
+      .catch(() => toast("Erro ao atualizar"));
+  });
+  $("#dia").value = ymd(new Date());
+  $("#dia").addEventListener("change", carregarPedidos);
+  const moverDia = n => { const [a,m,d] = $("#dia").value.split("-").map(Number); $("#dia").value = ymd(new Date(a, m-1, d+n)); carregarPedidos(); };
+  $("#diaAnt").onclick = () => moverDia(-1); $("#diaProx").onclick = () => moverDia(1);
+
   function desenharResumo() {
     const c = ler(), l = c.log || [];
     $("#kEsg").textContent = (c.esgotados || []).length;
@@ -354,6 +448,7 @@
     if (!$("#aba-loja").hidden) desenharStatus();
     if (!$("#aba-cardapio").hidden) desenharLista();
     if (!$("#aba-hist").hidden) desenharHist();
+    if (!$("#aba-pedidos").hidden && !refPed) carregarPedidos();
   }
   setInterval(() => { if (!$("#aba-loja").hidden) desenharStatus(); }, 30000);
 </script>
