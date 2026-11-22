@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Guia do novo site — Castelhanos Lanches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verm:#8b1a1a; --verm2:#a82424; --vinho:#5e0f0f; --laranja:#e8731a; --laranja2:#c8560d;
+    --amarelo:#ffc21a; --creme:#fbf1d9; --creme2:#f6e6c2; --papel:#fffaf0; --texto:#2b1210; --suave:#6e4a40; --verde:#1f9d55;
+    --sombra:0 18px 40px -18px rgba(94,15,15,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:76px}
+  body{font-family:Nunito,system-ui,sans-serif;background:var(--creme);color:var(--texto);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+  img,video{display:block;max-width:100%}
+  a{color:var(--verm2)}
+  h1,h2,h3,.bebas{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;letter-spacing:.02em;line-height:1}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 1.4rem}
+
+  /* ---------- HERO ---------- */
+  .hero{background:radial-gradient(1200px 500px at 85% -10%,#f39a3d 0,transparent 60%),linear-gradient(160deg,var(--laranja) 0%,var(--laranja2) 55%,var(--verm) 100%);color:#fff;position:relative;overflow:hidden;padding:3.2rem 0 0}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:70px;background:var(--creme);clip-path:polygon(0 100%,0 55%,50% 0,100% 55%,100% 100%)}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:2rem;align-items:center;position:relative;z-index:1}
+  .selo{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.25);padding:.35rem .9rem;border-radius:999px;font-weight:800;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase}
+  .hero h1{font-size:clamp(3.2rem,7vw,5.6rem);margin:1rem 0 .4rem;text-shadow:0 4px 0 rgba(94,15,15,.35)}
+  .hero h1 span{color:var(--amarelo)}
+  .hero p.lead{font-size:1.2rem;max-width:34rem;opacity:.95;font-weight:600}
+  .acoes{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.6rem 0 4.5rem}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.4rem;border-radius:14px;font-weight:900;text-decoration:none;font-size:1rem;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.am{background:var(--amarelo);color:var(--vinho);box-shadow:0 8px 0 -2px #c99400}
+  .btn.cl{background:rgba(255,255,255,.14);color:#fff;border:2px solid rgba(255,255,255,.45)}
+  .hero-fones{position:relative;height:540px}
+  .hero-fones .fone{position:absolute;width:250px}
+  .hero-fones .f1{left:4%;top:20px;transform:rotate(-6deg)}
+  .hero-fones .f2{right:4%;top:60px;transform:rotate(5deg)}
+
+  /* ---------- MOLDURAS ---------- */
+  .fone{background:#1b0d0b;border-radius:38px;padding:24px 9px 12px;box-shadow:var(--sombra),inset 0 0 0 2px #3a1f1a;position:relative}
+  .fone::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);width:64px;height:8px;background:#3a1f1a;border-radius:999px}
+  .fone img,.fone video{border-radius:22px;width:100%;aspect-ratio:390/844;object-fit:cover;object-position:top;background:#fbf1d9}
+  .note{background:#2a1512;border-radius:16px 16px 6px 6px;padding:12px 12px 16px;box-shadow:var(--sombra);position:relative}
+  .note img{border-radius:6px;width:100%}
+  .note::after{content:"";position:absolute;left:-6%;right:-6%;bottom:-14px;height:14px;background:linear-gradient(#cdb9a6,#a9917b);border-radius:0 0 14px 14px}
+  .zoom{cursor:zoom-in}
+
+  /* ---------- NAV ---------- */
+  .nav{position:sticky;top:0;z-index:20;background:rgba(139,26,26,.96);backdrop-filter:blur(8px);box-shadow:0 6px 18px -10px rgba(0,0,0,.5)}
+  .nav .wrap{display:flex;gap:.4rem;overflow-x:auto;padding-top:.6rem;padding-bottom:.6rem;scrollbar-width:none}
+  .nav .wrap::-webkit-scrollbar{display:none}
+  .nav a{flex:none;color:#fff;text-decoration:none;font-weight:800;font-size:.92rem;padding:.45rem .95rem;border-radius:999px;background:rgba(255,255,255,.1);transition:background .15s}
+  .nav a:hover,.nav a.on{background:var(--amarelo);color:var(--vinho)}
+
+  /* ---------- SEÇÕES ---------- */
+  section.bloco{padding:4.5rem 0}
+  section.bloco.alt{background:var(--papel)}
+  .tag{display:inline-block;background:var(--verm);color:var(--amarelo);font-family:"Bebas Neue";font-size:1.25rem;letter-spacing:.06em;padding:.25rem .9rem .1rem;border-radius:8px;transform:rotate(-1.5deg)}
+  h2.tit{font-size:clamp(2.4rem,5vw,3.6rem);color:var(--verm);margin:.9rem 0 .5rem}
+  p.sub{font-size:1.12rem;color:var(--suave);max-width:46rem;font-weight:600}
+
+  .fluxo{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.2rem;counter-reset:f}
+  .fluxo .c{background:#fff;border-radius:20px;padding:1.6rem 1.4rem;box-shadow:var(--sombra);position:relative;border-top:6px solid var(--laranja)}
+  .fluxo .c:nth-child(2){border-color:var(--verde)}
+  .fluxo .c:nth-child(3){border-color:var(--verm)}
+  .fluxo .c .ic{font-size:2.2rem}
+  .fluxo .c h3{font-size:1.8rem;color:var(--verm);margin:.5rem 0 .3rem}
+  .fluxo .c p{color:var(--suave);font-weight:600}
+  .fluxo .c:not(:last-child)::after{content:"➜";position:absolute;right:-1.05rem;top:50%;transform:translateY(-50%);width:2rem;height:2rem;display:grid;place-items:center;background:var(--amarelo);color:var(--vinho);border-radius:50%;font-weight:900;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.15)}
+
+  .dupla{display:grid;grid-template-columns:300px 1fr;gap:3rem;align-items:start;margin-top:2.5rem}
+  .dupla.inv{grid-template-columns:1fr 300px}
+  .dupla.inv .midia{order:2}
+  .midia{position:sticky;top:96px}
+  .legenda{text-align:center;font-weight:800;font-size:.85rem;color:var(--suave);margin-top:.9rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+  .legenda i{width:8px;height:8px;border-radius:50%;background:#e23b3b;display:inline-block;animation:pisca 1.4s infinite}
+  @keyframes pisca{50%{opacity:.25}}
+
+  .passos{list-style:none;counter-reset:p;display:grid;gap:1rem}
+  .passos li{counter-increment:p;background:#fff;border-radius:18px;padding:1.1rem 1.2rem 1.1rem 4.2rem;position:relative;box-shadow:0 6px 16px -10px rgba(94,15,15,.3)}
+  .passos li::before{content:counter(p);position:absolute;left:1.1rem;top:1rem;width:2.3rem;height:2.3rem;border-radius:12px;background:var(--verm);color:var(--amarelo);font-family:"Bebas Neue";font-size:1.5rem;display:grid;place-items:center;padding-top:.15rem}
+  .passos li b{color:var(--verm)}
+  .passos li p{color:var(--suave);font-weight:600;font-size:.98rem;margin-top:.15rem}
+
+  .galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.6rem;margin-top:2.2rem}
+  .galeria figure{text-align:center}
+  .galeria .fone{max-width:240px;margin:0 auto}
+  .galeria figcaption{margin-top:.9rem;font-weight:800;color:var(--verm);font-size:1.02rem}
+  .galeria figcaption small{display:block;font-weight:600;color:var(--suave);font-size:.88rem;margin-top:.15rem}
+
+  .lado{display:grid;grid-template-columns:1fr auto 1fr;gap:1.4rem;align-items:center;margin-top:2.2rem;background:#fff;border-radius:24px;padding:2rem;box-shadow:var(--sombra)}
+  .lado figure{text-align:center}
+  .lado .fone{max-width:230px;margin:0 auto}
+  .lado .seta{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:2.6rem;color:var(--laranja);font-weight:900;text-align:center}
+  .lado .seta small{display:block;font-size:.8rem;color:var(--suave);font-weight:800;max-width:7rem}
+  .lado figcaption{margin-top:.8rem;font-weight:900;color:var(--verm)}
+
+  .dica{display:flex;gap:.9rem;align-items:flex-start;background:#fff4d6;border:2px dashed #e6b84a;border-radius:16px;padding:1rem 1.2rem;margin-top:1.2rem;font-weight:700;color:#6b4b10}
+  .dica .e{font-size:1.5rem;line-height:1}
+  .alerta{background:#fde8e8;border-color:#e59a9a;color:#7a1d1d}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.4rem 0}
+  .kpis div{background:#fff;border-radius:16px;padding:1rem;text-align:center;box-shadow:0 6px 16px -10px rgba(94,15,15,.3)}
+  .kpis b{display:block;font-family:"Bebas Neue";font-size:2rem;color:var(--verm);line-height:1}
+  .kpis span{font-size:.85rem;font-weight:800;color:var(--suave)}
+
+  .pc{margin-top:3rem}
+  .pc .note{max-width:860px;margin:0 auto}
+  .pc p{text-align:center;margin-top:2rem;font-weight:800;color:var(--suave)}
+
+  .rotina{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.2rem}
+  .rotina .c{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--sombra)}
+  .rotina .c header{padding:1.1rem 1.3rem;color:#fff;display:flex;align-items:center;gap:.7rem}
+  .rotina .c header h3{font-size:1.9rem}
+  .rotina .c header span{font-size:1.8rem}
+  .rotina .c:nth-child(1) header{background:linear-gradient(135deg,#f39a3d,var(--laranja2))}
+  .rotina .c:nth-child(2) header{background:linear-gradient(135deg,#2bb56a,#167a42)}
+  .rotina .c:nth-child(3) header{background:linear-gradient(135deg,var(--verm2),var(--vinho))}
+  .rotina ul{list-style:none;padding:1.1rem 1.3rem 1.4rem;display:grid;gap:.7rem}
+  .rotina li{display:flex;gap:.6rem;font-weight:700}
+  .rotina li::before{content:"✓";flex:none;width:1.4rem;height:1.4rem;border-radius:6px;background:var(--creme2);color:var(--verm);display:grid;place-items:center;font-weight:900;font-size:.85rem;margin-top:.15rem}
+
+  .faq{margin-top:2rem;display:grid;gap:.8rem;max-width:860px}
+  .faq details{background:#fff;border-radius:16px;box-shadow:0 6px 16px -10px rgba(94,15,15,.3);overflow:hidden}
+  .faq summary{cursor:pointer;list-style:none;padding:1.1rem 3rem 1.1rem 1.3rem;font-weight:900;color:var(--verm);position:relative;font-size:1.05rem}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);width:1.8rem;height:1.8rem;border-radius:50%;background:var(--creme2);display:grid;place-items:center;font-size:1.3rem;transition:transform .2s}
+  .faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+  .faq details p{padding:0 1.3rem 1.2rem;color:var(--suave);font-weight:600}
+
+  footer{background:var(--vinho);color:#f3d9c8;padding:3rem 0;text-align:center}
+  footer .bebas{font-size:2.4rem;color:#fff}
+  footer p{opacity:.85;font-weight:600;margin-top:.4rem;font-size:.95rem}
+  footer .links{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.4rem}
+
+  /* lightbox */
+  .lb{position:fixed;inset:0;background:rgba(20,6,5,.88);display:none;place-items:center;z-index:100;padding:2rem;cursor:zoom-out}
+  .lb.on{display:grid}
+  .lb img{max-height:92vh;max-width:96vw;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+
+  /* revelar ao rolar */
+  .rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .rv.vis{opacity:1;transform:none}
+
+  @media (max-width:900px){
+    body{font-size:16px}
+    .hero .wrap{grid-template-columns:1fr}
+    .hero-fones{height:430px;max-width:420px;margin:0 auto;width:100%}
+    .hero-fones .fone{width:200px}
+    .acoes{margin-bottom:1.5rem}
+    .fluxo,.rotina{grid-template-columns:1fr}
+    .fluxo .c:not(:last-child)::after{right:50%;top:auto;bottom:-1.3rem;transform:translateX(50%) rotate(90deg)}
+    .dupla,.dupla.inv{grid-template-columns:1fr;gap:2rem}
+    .dupla.inv .midia{order:0}
+    .midia{position:static;max-width:280px;margin:0 auto}
+    .lado{grid-template-columns:1fr;padding:1.4rem}
+    .lado .seta span{display:inline-block;transform:rotate(90deg)}
+    .lado .seta small{margin:0 auto;max-width:none}
+    section.bloco{padding:3.2rem 0}
+  }
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="selo">🍔 Guia do sistema</span>
+      <h1>Castelhanos<br><span>no celular</span></h1>
+      <p class="lead">Como funciona o novo site de pedidos e o painel da loja: do pedido do cliente até o faturamento do dia.</p>
+      <div class="acoes">
+        <a class="btn am" href="https://sitesvictor.github.io/castelhanos-lanches/" target="_blank" rel="noopener">Abrir o site ↗</a>
+        <a class="btn cl" href="https://sitesvictor.github.io/castelhanos-lanches/admin.html" target="_blank" rel="noopener">Abrir o painel ↗</a>
+      </div>
+    </div>
+    <div class="hero-fones">
+      <div class="fone f1"><img src="c1-inicio.webp" alt="Tela inicial do site"></div>
+      <div class="fone f2"><img src="a6-pedidos.webp" alt="Painel com os pedidos do dia"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#visao">Visão geral</a>
+    <a href="#cliente">Site do cliente</a>
+    <a href="#entrar">Entrar no painel</a>
+    <a href="#loja">Abrir e fechar</a>
+    <a href="#cardapio">Esgotados</a>
+    <a href="#pedidos">Pedidos e faturamento</a>
+    <a href="#rotina">Rotina</a>
+    <a href="#duvidas">Dúvidas</a>
+  </div>
+</nav>
+
+<!-- ================= VISÃO GERAL ================= -->
+<section class="bloco" id="visao">
+  <div class="wrap">
+    <span class="tag">Visão geral</span>
+    <h2 class="tit">Como tudo se conecta</h2>
+    <p class="sub">São duas partes: o <b>site</b>, onde o cliente vê o cardápio e monta o pedido, e o <b>painel</b>, onde a loja controla tudo. As duas conversam em tempo real.</p>
+    <div class="fluxo">
+      <div class="c rv"><div class="ic">📱</div><h3>Cliente monta o pedido</h3><p>Escolhe os lanches, tira ingredientes de cada um, informa entrega ou retirada e o pagamento.</p></div>
+      <div class="c rv"><div class="ic">💬</div><h3>Pedido chega na loja</h3><p>Vai pronto para o WhatsApp da loja e, ao mesmo tempo, aparece no painel com aviso de novo pedido.</p></div>
+      <div class="c rv"><div class="ic">🧾</div><h3>Loja controla pelo painel</h3><p>Fecha a loja quando precisar, marca o que acabou, acompanha os pedidos e o faturamento do dia.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CLIENTE ================= -->
+<section class="bloco alt" id="cliente">
+  <div class="wrap">
+    <span class="tag">Site do cliente</span>
+    <h2 class="tit">O pedido em menos de um minuto</h2>
+    <p class="sub">O cliente não precisa baixar nada nem criar conta. Abre o link (pelo Instagram ou WhatsApp) e pede.</p>
+
+    <div class="dupla">
+      <div class="midia rv">
+        <div class="fone"><video src="v1-pedido.mp4" poster="v1-pedido.jpg" muted loop playsinline preload="none"></video></div>
+        <div class="legenda"><i></i> Pedido sendo feito</div>
+      </div>
+      <ol class="passos">
+        <li class="rv"><b>Escolhe os lanches</b><p>Toca no <b>+</b> para adicionar. Os mais pedidos ficam em destaque no topo, e dá para buscar por nome ou ingrediente (ex.: “bacon”).</p></li>
+        <li class="rv"><b>Personaliza cada lanche separado</b><p>Se pedir dois X-Tudo, pode tirar o tomate de um só. Cada lanche tem seus botões “sem alface”, “sem milho”…</p></li>
+        <li class="rv"><b>Entrega ou retirada</b><p>Na entrega, escolhe o bairro e a taxa já entra no total automaticamente.</p></li>
+        <li class="rv"><b>Pagamento e envio</b><p>Pix, cartão ou dinheiro (com troco). Ao tocar em <b>Enviar pedido no WhatsApp</b>, a mensagem chega pronta e organizada para a loja.</p></li>
+        <li class="rv"><b>O site lembra o cliente</b><p>Nome, endereço e bairro ficam salvos no celular dele para o próximo pedido.</p></li>
+      </ol>
+    </div>
+
+    <div class="galeria">
+      <figure class="rv"><div class="fone"><img class="zoom" src="c2-adicionar.webp" alt="Lanche adicionado"></div><figcaption>Cardápio<small>Quantidade e total sempre visíveis</small></figcaption></figure>
+      <figure class="rv"><div class="fone"><img class="zoom" src="c3-carrinho.webp" alt="Carrinho com alterações"></div><figcaption>Seu pedido<small>Alterações por lanche</small></figcaption></figure>
+      <figure class="rv"><div class="fone"><img class="zoom" src="c4-dados.webp" alt="Dados do cliente"></div><figcaption>Dados e envio<small>Taxa do bairro somada sozinha</small></figcaption></figure>
+    </div>
+
+    <div class="pc rv">
+      <div class="note"><img class="zoom" src="c7-desktop.webp" alt="Site no computador"></div>
+      <p>No computador o site também se ajusta, com o cardápio em duas colunas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENTRAR ================= -->
+<section class="bloco" id="entrar">
+  <div class="wrap">
+    <span class="tag">Painel da loja</span>
+    <h2 class="tit">Como entrar</h2>
+    <div class="dupla">
+      <div class="midia rv"><div class="fone"><img class="zoom" src="a1-login.webp" alt="Tela de login"></div></div>
+      <div>
+        <ol class="passos">
+          <li class="rv"><b>Abra o endereço do painel</b><p>sitesvictor.github.io/castelhanos-lanches/<b>admin.html</b></p></li>
+          <li class="rv"><b>Digite o e-mail e a senha da loja</b><p>E toque em <b>Entrar</b>. O acesso fica salvo naquele aparelho até tocar em <b>Sair</b>.</p></li>
+          <li class="rv"><b>Use as abas de baixo</b><p><b>Loja</b>, <b>Cardápio</b>, <b>Pedidos</b> e <b>Histórico</b>. No computador elas ficam na lateral.</p></li>
+        </ol>
+        <div class="dica rv"><span class="e">📌</span><div>Salve o painel na tela inicial do celular: no navegador, toque em <b>Compartilhar / ⋮</b> → <b>Adicionar à tela inicial</b>. Ele abre como um aplicativo.</div></div>
+        <div class="dica alerta rv"><span class="e">🔒</span><div>O e-mail e a senha são só da equipe. Nunca passe para clientes.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOJA ================= -->
+<section class="bloco alt" id="loja">
+  <div class="wrap">
+    <span class="tag">Aba Loja</span>
+    <h2 class="tit">Abrir e fechar a loja</h2>
+    <p class="sub">Para exceções: fechar mais cedo, chuva forte, acabou o pão. Os dias e horários normais de funcionamento serão configurados no site com vocês.</p>
+
+    <div class="dupla inv">
+      <div class="midia rv">
+        <div class="fone"><video src="v2-fechar.mp4" poster="v2-fechar.jpg" muted loop playsinline preload="none"></video></div>
+        <div class="legenda"><i></i> Fechando por 1 hora</div>
+      </div>
+      <div>
+        <ol class="passos">
+          <li class="rv"><b>Toque em “Fechar a loja…”</b><p>O cartão verde mostra que a loja está recebendo pedidos.</p></li>
+          <li class="rv"><b>Escolha por quanto tempo</b><p>30 min, 1 hora, 2 horas, só hoje ou até reabrir. Com tempo definido, a loja <b>reabre sozinha</b>.</p></li>
+          <li class="rv"><b>Escolha o motivo</b><p>“Chuva forte”, “Imprevisto”… ou escreva o seu. O cliente vê esse aviso.</p></li>
+          <li class="rv"><b>Confirme</b><p>O cartão fica vermelho. Para voltar antes, toque em <b>Reabrir agora</b>.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="lado rv">
+      <figure><div class="fone"><img class="zoom" src="a4-loja-fechada.webp" alt="Painel com loja fechada"></div><figcaption>No painel</figcaption></figure>
+      <div class="seta"><span>➜</span><small>na hora, para todos os clientes</small></div>
+      <figure><div class="fone"><img class="zoom" src="c5-fechada.webp" alt="Site com loja fechada"></div><figcaption>No site do cliente</figcaption></figure>
+    </div>
+    <div class="dica rv"><span class="e">💡</span><div>Com a loja fechada o cliente continua vendo o cardápio e os preços, mas não consegue montar nem enviar pedido.</div></div>
+  </div>
+</section>
+
+<!-- ================= CARDÁPIO ================= -->
+<section class="bloco" id="cardapio">
+  <div class="wrap">
+    <span class="tag">Aba Cardápio</span>
+    <h2 class="tit">Marcar o que acabou</h2>
+    <p class="sub">Acabou a calabresa? Desligue o lanche e ninguém consegue pedir até você ligar de novo.</p>
+
+    <div class="dupla">
+      <div class="midia rv">
+        <div class="fone"><video src="v3-esgotado.mp4" poster="v3-esgotado.jpg" muted loop playsinline preload="none"></video></div>
+        <div class="legenda"><i></i> Desligando e religando</div>
+      </div>
+      <div>
+        <ol class="passos">
+          <li class="rv"><b>Busque o lanche</b><p>Digite parte do nome ou role a lista, separada por categoria.</p></li>
+          <li class="rv"><b>Desligue a chavinha</b><p>Fica vermelha e o lanche aparece como <b>Esgotado</b> para o cliente.</p></li>
+          <li class="rv"><b>Voltou? Ligue de novo</b><p>Ou use <b>Marcar todos como disponíveis</b> para liberar tudo de uma vez, por exemplo ao abrir.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="lado rv">
+      <figure><div class="fone"><img class="zoom" src="a5-cardapio.webp" alt="Painel cardápio"></div><figcaption>X-Egg desligado no painel</figcaption></figure>
+      <div class="seta"><span>➜</span><small>o cliente vê</small></div>
+      <figure><div class="fone"><img class="zoom" src="c6-esgotado.webp" alt="Lanche esgotado no site"></div><figcaption>“Esgotado” no site</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PEDIDOS ================= -->
+<section class="bloco alt" id="pedidos">
+  <div class="wrap">
+    <span class="tag">Aba Pedidos</span>
+    <h2 class="tit">Pedidos e faturamento do dia</h2>
+    <p class="sub">Todo pedido enviado pelo site fica registrado aqui. É o levantamento do dia pronto, sem anotar nada.</p>
+
+    <div class="dupla inv">
+      <div class="midia rv">
+        <div class="fone"><video src="v4-pedidos.mp4" poster="v4-pedidos.jpg" muted loop playsinline preload="none"></video></div>
+        <div class="legenda"><i></i> Chega um pedido e é cancelado</div>
+      </div>
+      <div>
+        <ol class="passos">
+          <li class="rv"><b>Acompanhe em tempo real</b><p>Novo pedido aparece no topo com o aviso <b>🔔 Novo pedido!</b> Não precisa atualizar a página.</p></li>
+          <li class="rv"><b>Tudo do pedido num cartão</b><p>Horário, nome, entrega (endereço e bairro) ou retirada, pagamento e troco, itens com as alterações e observações.</p></li>
+          <li class="rv"><b>Cliente cancelou?</b><p>Toque em <b>Cancelar pedido</b> e confirme. Ele fica riscado e <b>sai do faturamento</b>. Foi engano? <b>Reativar pedido</b>.</p></li>
+          <li class="rv"><b>Veja outros dias</b><p>Use as setas ‹ › ou o calendário para consultar qualquer dia anterior.</p></li>
+        </ol>
+        <div class="dica rv"><span class="e">🧮</span><div>O faturamento é a soma dos totais dos pedidos ativos e já inclui a taxa de entrega. Pedidos cancelados não entram.</div></div>
+      </div>
+    </div>
+
+    <div class="galeria">
+      <figure class="rv"><div class="fone"><img class="zoom" src="a6-pedidos.webp" alt="Lista de pedidos"></div><figcaption>Resumo do dia<small>Faturamento, pedidos e ticket médio</small></figcaption></figure>
+      <figure class="rv"><div class="fone"><img class="zoom" src="a7-cancelado.webp" alt="Pedido cancelado"></div><figcaption>Pedido cancelado<small>Riscado e fora da conta</small></figcaption></figure>
+      <figure class="rv"><div class="fone"><img class="zoom" src="a8-historico.webp" alt="Histórico"></div><figcaption>Aba Histórico<small>Quem fez o quê e quando</small></figcaption></figure>
+    </div>
+
+    <div class="pc rv">
+      <div class="note"><img class="zoom" src="a10-desktop-pedidos.webp" alt="Painel de pedidos no computador"></div>
+      <p>No computador do balcão, o painel mostra os pedidos em duas colunas com o menu na lateral.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROTINA ================= -->
+<section class="bloco" id="rotina">
+  <div class="wrap">
+    <span class="tag">Dia a dia</span>
+    <h2 class="tit">Rotina sugerida</h2>
+    <p class="sub">Três momentos rápidos que mantêm o site sempre certo para o cliente.</p>
+    <div class="rotina">
+      <div class="c rv"><header><span>🌅</span><h3>Ao abrir</h3></header>
+        <ul><li>Entrar no painel e conferir se está “Recebendo pedidos”.</li><li>Ver o que falta no estoque e marcar como esgotado.</li><li>Deixar o painel aberto no celular ou no computador do balcão.</li></ul></div>
+      <div class="c rv"><header><span>🔥</span><h3>Durante</h3></header>
+        <ul><li>Acompanhar os pedidos pelo WhatsApp e pelo painel.</li><li>Acabou algo? Desligar na hora no Cardápio.</li><li>Cliente desistiu? Cancelar o pedido no painel.</li><li>Imprevisto? Fechar a loja com o motivo.</li></ul></div>
+      <div class="c rv"><header><span>🌙</span><h3>Ao fechar</h3></header>
+        <ul><li>Abrir a aba Pedidos e conferir o faturamento do dia.</li><li>Comparar com o caixa, se quiser.</li><li>Religar os lanches esgotados para o dia seguinte.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DÚVIDAS ================= -->
+<section class="bloco alt" id="duvidas">
+  <div class="wrap">
+    <span class="tag">Dúvidas</span>
+    <h2 class="tit">Perguntas frequentes</h2>
+    <div class="faq">
+      <details class="rv"><summary>O pedido continua chegando no WhatsApp?</summary><p>Sim. O WhatsApp continua sendo o canal de atendimento. O painel é o registro organizado para acompanhar e somar o faturamento.</p></details>
+      <details class="rv"><summary>Se o cliente não tocar em “enviar” no WhatsApp, o pedido aparece no painel?</summary><p>O pedido é registrado no painel no momento em que ele toca em “Enviar pedido no WhatsApp”. Se depois ele desistir de mandar a mensagem, o pedido aparece no painel mesmo assim: nesse caso, é só cancelar.</p></details>
+      <details class="rv"><summary>Mais de uma pessoa pode usar o painel ao mesmo tempo?</summary><p>Sim. Pode estar aberto no celular do dono e no computador do balcão; tudo atualiza nos dois na hora.</p></details>
+      <details class="rv"><summary>Esqueci de reabrir a loja. E agora?</summary><p>Se você escolheu um tempo (30 min, 1 hora, 2 horas ou só hoje), ela reabre sozinha. Se escolheu “até eu reabrir”, entre no painel e toque em “Reabrir agora”.</p></details>
+      <details class="rv"><summary>Dá para mudar preços, lanches ou taxas de entrega?</summary><p>Sim, mas por enquanto isso é feito por quem cuida do site. É só avisar o que mudou.</p></details>
+      <details class="rv"><summary>O painel não carrega. O que fazer?</summary><p>Confira a internet e atualize a página. Se pedir login de novo, entre com o e-mail e a senha da loja.</p></details>
+      <details class="rv"><summary>Quanto custa manter?</summary><p>O site e o banco de pedidos estão em planos gratuitos, que atendem com folga o movimento de uma lanchonete.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="bebas">Castelhanos Lanches</div>
+    <p>As imagens deste guia usam pedidos e nomes de exemplo, só para demonstração.</p>
+    <div class="links">
+      <a class="btn am" href="https://sitesvictor.github.io/castelhanos-lanches/" target="_blank" rel="noopener">Abrir o site ↗</a>
+      <a class="btn cl" href="https://sitesvictor.github.io/castelhanos-lanches/admin.html" target="_blank" rel="noopener">Abrir o painel ↗</a>
+    </div>
+  </div>
+</footer>
+
+<div class="lb" id="lb"><img alt=""></div>
+
+<script>
+  // revelar ao rolar
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+
+  // vídeos tocam só quando aparecem na tela
+  const vo = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause();
+  }), { threshold: .35 });
+  document.querySelectorAll("video").forEach(v => vo.observe(v));
+
+  // ampliar imagens
+  const lb = document.getElementById("lb");
+  document.querySelectorAll("img.zoom").forEach(i => i.addEventListener("click", () => { lb.querySelector("img").src = i.src; lb.classList.add("on"); }));
+  lb.addEventListener("click", () => lb.classList.remove("on"));
+  addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("on"); });
+
+  // destaca a seção atual no menu
+  const links = [...document.querySelectorAll(".nav a")];
+  const so = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => { const on = a.getAttribute("href") === "#" + e.target.id; a.classList.toggle("on", on); if (on) { const w = a.parentElement; w.scrollTo({ left: a.offsetLeft - w.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" }); } });
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  document.querySelectorAll("section[id]").forEach(s => so.observe(s));
+</script>
+</body>
+</html>
