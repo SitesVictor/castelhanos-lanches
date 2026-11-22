@@ -437,7 +437,9 @@
 
   function desenharResumo() {
     const c = ler(), l = c.log || [];
-    $("#kEsg").textContent = (c.esgotados || []).length;
+    const ne = (c.esgotados || []).length;
+    $("#kEsg").textContent = ne; $("#kEsg").nextElementSibling.textContent = ne === 1 ? "lanche esgotado" : "lanches esgotados";
+    $("#kAcoes").nextElementSibling.textContent = l.length === 1 ? "ação registrada" : "ações registradas";
     $("#kAcoes").textContent = l.length;
     $("#ultimas").innerHTML = l.length ? l.slice(0,4).map(x => `<div class="log">${esc(x.txt)}<small>${dataHora(x.t)}</small></div>`).join("") : `<div class="vazio">Nenhuma ação ainda.</div>`;
   }
