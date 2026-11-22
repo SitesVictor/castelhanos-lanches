@@ -239,6 +239,7 @@
   const gravar = c => { try { localStorage.setItem("cl_loja", JSON.stringify(c)); } catch(e) { alert("Não foi possível salvar neste navegador."); } };
   const hora = ts => new Date(ts).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
   const dataHora = ts => new Date(ts).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+  const TITULOS = { loja:["Loja","Controle se a loja está recebendo pedidos"], cardapio:["Cardápio","Marque o que acabou para não receber pedido"], hist:["Histórico","Tudo que foi feito neste painel"] };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
   function toast(t) { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.remove("on"), 2200); }
@@ -340,7 +341,6 @@
     $("#hist").innerHTML = l.length ? l.map(x => `<div class="log">${esc(x.txt)}<small>${dataHora(x.t)}</small></div>`).join("") : `<div class="vazio">Nenhuma ação registrada ainda.</div>`;
   }
 
-  const TITULOS = { loja:["Loja","Controle se a loja está recebendo pedidos"], cardapio:["Cardápio","Marque o que acabou para não receber pedido"], hist:["Histórico","Tudo que foi feito neste painel"] };
   function desenharResumo() {
     const c = ler(), l = c.log || [];
     $("#kEsg").textContent = (c.esgotados || []).length;

@@ -108,6 +108,10 @@
   .item.esgotado { opacity:.55; border-left-color:#aaa; position:relative; }
   .item.esgotado .qtd { display:none; }
   .item.esgotado::after { content:"Esgotado"; background:#8b1a1a; color:#fff; font-weight:800; font-size:.72rem; border-radius:999px; padding:.25rem .7rem; }
+  .fechado-ban { background:#fde0e0; color:#8b1a1a; border:2px solid #c0392b; border-radius:14px; padding:.9rem 1rem; margin-top:1rem; font-weight:800; text-align:center; }
+  .fechado-ban[hidden] { display:none; }
+  body.fechada .item .qtd, body.fechada .dcard .btn, body.fechada .barra { display:none !important; }
+  body.fechada .item, body.fechada .dcard { opacity:.8; }
   .alerta { font-size:.8rem; opacity:.8; max-width:480px; margin:0 auto .8rem; }
 
   /* ===== Computador ===== */
@@ -162,6 +166,7 @@
 <nav id="menu"></nav>
 
 <main>
+  <div id="bannerFechada" class="fechado-ban" hidden></div>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar lanche ou ingrediente (ex.: bacon)" aria-label="Buscar no cardápio"></div>
   <section id="destaques"></section>
   <div id="semResultado">Nenhum lanche encontrado. Tente outra palavra.</div>
@@ -283,6 +288,7 @@
     const b = e.target.closest("[data-id]");
     if (!b) return;
     const id = b.dataset.id;
+    if (lojaFechada()) return;
     if (itens[id] && itens[id].esg) return;
     qtd[id] = Math.max(0, (qtd[id]||0) + Number(b.dataset.d));
     if (!qtd[id]) delete qtd[id];
@@ -456,6 +462,12 @@
   function lojaFechada() { const c = lerLoja(); return !!c.fechado && (!c.ate || Date.now() < c.ate); }
   function statusLoja() {
     const cfg = lerLoja(), H = HORARIO, el = $("#status");
+    const fech = lojaFechada(), bn = $("#bannerFechada");
+    document.body.classList.toggle("fechada", fech);
+    bn.hidden = !fech;
+    if (fech) bn.textContent = "Estamos fechados" + (cfg.msg ? " — " + cfg.msg : "")
+      + (cfg.ate ? ". Voltamos às " + new Date(cfg.ate).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) : "")
+      + ". Você pode ver o cardápio, mas não é possível pedir agora.";
     if (lojaFechada()) {
       el.className = "";
       el.textContent = "";
