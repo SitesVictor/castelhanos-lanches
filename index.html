@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Castelhanos Lanches — Cardápio e Pedidos</title>
+<meta name="description" content="Cardápio da Castelhanos Lanches. Escolha seus lanches e envie o pedido direto pelo WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --verm:#8b1a1a; --verm2:#a82424; --laranja:#e8731a; --creme:#fbf1d9; --amarelo:#ffc21a; --texto:#2b1210; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; scroll-padding-top:70px; }
+  body { font-family:'Nunito',system-ui,sans-serif; background:var(--creme); color:var(--texto); line-height:1.45; padding-bottom:6rem; }
+  h1,h2,h3 { font-family:'Bebas Neue',Impact,sans-serif; font-weight:400; letter-spacing:.03em; }
+
+  .hero { background:linear-gradient(160deg,var(--laranja),#c9560d); color:#fff; text-align:center; padding:2rem 1rem 2.4rem; position:relative; clip-path:polygon(0 0,100% 0,100% 92%,50% 100%,0 92%); }
+  .hero svg { width:92px; height:92px; }
+  .hero h1 { font-size:3rem; line-height:1; color:#fff; text-shadow:0 3px 0 var(--verm); }
+  .hero p { font-weight:700; letter-spacing:.3em; text-transform:uppercase; font-size:.8rem; margin-top:.2rem; }
+  .aviso { display:inline-block; margin-top:1rem; background:var(--verm); border-radius:10px; padding:.5rem .9rem; font-size:.8rem; font-weight:700; max-width:420px; }
+
+  nav { position:sticky; top:0; z-index:10; background:var(--verm); display:flex; gap:.5rem; overflow-x:auto; padding:.6rem .8rem; box-shadow:0 4px 12px rgba(0,0,0,.25); scrollbar-width:none; }
+  nav::-webkit-scrollbar { display:none; }
+  nav a { flex:none; color:#fff; text-decoration:none; font-weight:800; font-size:.82rem; padding:.4rem .9rem; border-radius:999px; background:rgba(255,255,255,.12); }
+  nav a:active { background:var(--amarelo); color:var(--verm); }
+
+  main { max-width:680px; margin:0 auto; padding:0 1rem; }
+  section { margin-top:1.8rem; }
+  .titulo { display:inline-block; background:var(--verm); color:var(--amarelo); font-size:1.6rem; padding:.2rem 1.2rem; border-radius:10px 10px 10px 0; margin-bottom:.8rem; }
+
+  .item { background:#fff; border-radius:14px; padding:.8rem .9rem; margin-bottom:.6rem; display:flex; gap:.7rem; align-items:center; box-shadow:0 2px 8px -3px rgba(139,26,26,.3); border-left:5px solid var(--laranja); }
+  .item .info { flex:1; min-width:0; }
+  .item h3 { font-size:1.3rem; color:var(--verm); line-height:1.1; }
+  .item h3 span { color:var(--laranja); margin-right:.3rem; }
+  .item p { font-size:.85rem; opacity:.85; }
+  .item .preco { font-weight:800; color:var(--verm); margin-top:.15rem; }
+  .qtd { display:flex; align-items:center; gap:.4rem; }
+  .qtd button { width:34px; height:34px; border-radius:50%; border:0; font-size:1.3rem; font-weight:800; cursor:pointer; background:var(--verm); color:#fff; }
+  .qtd button.menos { background:#eee; color:var(--verm); }
+  .qtd b { min-width:1.2rem; text-align:center; }
+  .qtd .menos, .qtd b { visibility:hidden; }
+  .qtd.on .menos, .qtd.on b { visibility:visible; }
+
+  .taxas { background:#fff; border-radius:14px; padding:1rem; }
+  .taxas li { display:flex; justify-content:space-between; gap:1rem; list-style:none; padding:.35rem 0; border-bottom:1px dashed #e0c9a8; font-weight:600; }
+  .taxas li:last-child { border:0; }
+
+  footer { text-align:center; padding:2rem 1rem; font-weight:700; }
+  footer a { color:var(--verm); }
+
+  .barra { position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--verm); color:#fff; padding:.8rem 1rem; transform:translateY(110%); transition:transform .25s; }
+  .barra.on { transform:none; }
+  .barra .in { max-width:680px; margin:0 auto; display:flex; align-items:center; gap:1rem; }
+  .barra .t { flex:1; font-size:.85rem; }
+  .barra .t strong { display:block; font-size:1.3rem; color:var(--amarelo); }
+  .btn { border:0; border-radius:999px; padding:.8rem 1.4rem; font:800 1rem 'Nunito',sans-serif; cursor:pointer; background:var(--amarelo); color:var(--verm); }
+  .btn.zap { background:#25d366; color:#fff; width:100%; margin-top:.4rem; }
+  .btn:disabled { background:#bbb; color:#fff; cursor:not-allowed; }
+
+  dialog { border:0; border-radius:18px; width:min(94vw,520px); max-height:92vh; padding:0; background:var(--creme); color:var(--texto); margin:auto; }
+  dialog::backdrop { background:rgba(0,0,0,.55); }
+  .dlg { padding:1.2rem; }
+  .dlg h2 { font-size:2rem; color:var(--verm); }
+  .fechar { float:right; background:none; border:0; font-size:1.6rem; cursor:pointer; color:var(--verm); }
+  .resumo { background:#fff; border-radius:12px; padding:.7rem .9rem; margin:.6rem 0 1rem; font-size:.92rem; }
+  .resumo div { display:flex; justify-content:space-between; gap:1rem; padding:.2rem 0; }
+  .resumo .tot { border-top:2px solid var(--verm); margin-top:.4rem; padding-top:.5rem; font-weight:800; font-size:1.05rem; color:var(--verm); }
+  label { display:block; font-weight:800; font-size:.85rem; margin-bottom:.2rem; }
+  input, select, textarea { width:100%; padding:.65rem; border:2px solid #e8d3ad; border-radius:10px; font:inherit; background:#fff; margin-bottom:.7rem; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--laranja); }
+  .linha { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+  .vazio { text-align:center; padding:1rem; }
+
+  /* status aberto/fechado */
+  #status:empty { display:none; }
+  #status { display:inline-block; margin:.7rem .3rem 0; background:rgba(0,0,0,.25); border-radius:999px; padding:.3rem .9rem; font-size:.82rem; font-weight:800; }
+  #status i { display:inline-block; width:.6rem; height:.6rem; border-radius:50%; margin-right:.4rem; background:#ff6b6b; }
+  #status.aberto i { background:#3ddc84; }
+
+  /* busca */
+  .busca { margin-top:1.2rem; position:relative; }
+  .busca input { width:100%; padding:.8rem 1rem .8rem 2.6rem; border:2px solid #e8d3ad; border-radius:999px; font:inherit; background:#fff; }
+  .busca input:focus { outline:none; border-color:var(--laranja); }
+  .busca::before { content:"🔍"; position:absolute; left:1rem; top:50%; transform:translateY(-50%); font-size:1rem; }
+  #semResultado { text-align:center; padding:2rem 1rem; font-weight:700; display:none; }
+
+  /* destaques */
+  .dest { display:flex; gap:.7rem; overflow-x:auto; padding:.2rem .1rem .8rem; scroll-snap-type:x mandatory; scrollbar-width:none; }
+  .dest::-webkit-scrollbar { display:none; }
+  .dcard { flex:none; width:210px; scroll-snap-align:start; background:linear-gradient(160deg,#fff,#fff3d6); border-radius:14px; padding:.9rem; border-top:5px solid var(--amarelo); box-shadow:0 4px 12px -6px rgba(139,26,26,.5); display:flex; flex-direction:column; }
+  .dcard h3 { font-size:1.35rem; color:var(--verm); line-height:1.1; }
+  .dcard p { font-size:.78rem; opacity:.85; flex:1; margin:.2rem 0; }
+  .dcard .preco { font-weight:800; color:var(--verm); }
+  .dcard .btn { margin-top:.5rem; padding:.55rem .8rem; font-size:.85rem; }
+  .un { background:#fff; border-radius:12px; padding:.7rem .8rem; margin:.6rem 0; border-left:4px solid var(--laranja); }
+  .un-t { display:flex; align-items:center; gap:.5rem; }
+  .un-t b { flex:1; color:var(--verm); font-size:.95rem; }
+  .un-t small { font-weight:600; opacity:.7; }
+  .un-t .rm { border:0; background:none; font-size:1.1rem; cursor:pointer; }
+  .un-t .qm { display:flex; gap:.3rem; }
+  .un-t .qm button { width:30px; height:30px; border-radius:50%; border:0; background:var(--verm); color:#fff; font-weight:800; cursor:pointer; }
+  .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin:.5rem 0; }
+  .chip { border:1.5px solid #e0c9a8; background:#fff; border-radius:999px; padding:.25rem .7rem; font:700 .78rem 'Nunito',sans-serif; color:var(--texto); cursor:pointer; }
+  .chip.on { background:var(--verm); border-color:var(--verm); color:#fff; text-decoration:line-through; }
+  .obsu { margin:0 !important; padding:.5rem .65rem !important; font-size:.85rem; }
+  .resumo .nota { display:block; font-size:.75rem; opacity:.75; margin-top:.5rem; font-weight:600; }
+  .item.esgotado { opacity:.55; border-left-color:#aaa; position:relative; }
+  .item.esgotado .qtd { display:none; }
+  .item.esgotado::after { content:"Esgotado"; background:#8b1a1a; color:#fff; font-weight:800; font-size:.72rem; border-radius:999px; padding:.25rem .7rem; }
+  .alerta { font-size:.8rem; opacity:.8; max-width:480px; margin:0 auto .8rem; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M18 46c0-16 14-26 32-26s32 10 32 26z"/>
+    <path d="M14 56h72M20 66c6 0 6 5 12 5s6-5 12-5 6 5 12 5 6-5 12-5 6 5 10 5"/>
+    <path d="M20 80c0 6 5 8 10 8h40c5 0 10-2 10-8z"/>
+    <circle cx="38" cy="32" r="1.5" fill="#fff"/><circle cx="52" cy="28" r="1.5" fill="#fff"/><circle cx="64" cy="34" r="1.5" fill="#fff"/>
+  </svg>
+  <h1>Castelhanos</h1>
+  <p>Lanches</p>
+  <div class="aviso">Todos os lanches são acompanhados de alface, tomate, milho e batata palha.</div>
+  <div><span id="status"></span></div>
+</div>
+
+<nav id="menu"></nav>
+
+<main>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar lanche ou ingrediente (ex.: bacon)" aria-label="Buscar no cardápio"></div>
+  <section id="destaques"></section>
+  <div id="semResultado">Nenhum lanche encontrado. Tente outra palavra.</div>
+  <div id="cardapio"></div>
+
+  <section id="entrega">
+    <h2 class="titulo">Taxa de entrega</h2>
+    <ul class="taxas" id="taxas"></ul>
+  </section>
+</main>
+
+<footer>
+  <p class="alerta">Nossos lanches podem conter glúten, lactose e ovo. Tem alergia ou restrição alimentar? Avise nas observações do pedido.</p>
+  Disk entrega: <a href="https://wa.me/5528999445522">(28) 99944-5522</a><br>
+  Siga nossas redes sociais: <a href="https://instagram.com/castelhanoslanches" target="_blank" rel="noopener">@castelhanoslanches</a>
+</footer>
+
+<div class="barra" id="barra">
+  <div class="in">
+    <div class="t"><span id="qtdTotal">0 itens</span><strong id="subtotal">R$ 0,00</strong></div>
+    <button class="btn" id="abrir">Ver pedido</button>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <button class="fechar" id="fechar" aria-label="Fechar">×</button>
+    <h2>Seu pedido</h2>
+    <div id="unidades"></div>
+    <div class="resumo" id="resumo"></div>
+
+    <label for="nome">Seu nome</label>
+    <input id="nome" autocomplete="name">
+
+    <label for="tipo">Como prefere receber?</label>
+    <select id="tipo">
+      <option value="entrega">Entrega</option>
+      <option value="retirada">Retirar no local</option>
+    </select>
+
+    <div id="blocoEntrega">
+      <label for="bairro">Bairro</label>
+      <select id="bairro"></select>
+      <label for="end">Endereço (rua, número, referência)</label>
+      <input id="end" autocomplete="street-address">
+    </div>
+
+    <div class="linha">
+      <div>
+        <label for="pag">Pagamento</label>
+        <select id="pag">
+          <option>Pix</option><option>Dinheiro</option><option>Cartão</option>
+        </select>
+      </div>
+      <div id="blocoTroco">
+        <label for="troco">Troco para</label>
+        <input id="troco" inputmode="decimal" placeholder="Opcional">
+      </div>
+    </div>
+
+    <label for="obs">Observações (tirar algum ingrediente, etc.)</label>
+    <textarea id="obs" rows="2"></textarea>
+
+    <p id="avisoFechada" style="display:none;color:#a82424;font-weight:800;font-size:.9rem;margin-top:.4rem">A loja está fechada no momento. Não é possível enviar pedidos agora.</p>
+    <button class="btn zap" id="enviar" disabled>Enviar pedido no WhatsApp</button>
+  </div>
+</dialog>
+
+<script src="dados.js"></script>
+<script>
+  // ===== CONFIGURAÇÃO =====
+  const WHATSAPP = "5528999445522"; // (28) 99944-5522
+
+  // Itens em destaque no topo (troque pelos ids que mais vendem: categoria-número)
+  const DESTAQUES = ["hamburguer-11","hamburguer-12","frango-19","picanha-29"];
+
+  // Horário de funcionamento. Dia da semana: 0=domingo ... 6=sábado. Dia sem linha = fechado.
+  // Se fechar depois da meia-noite, use o horário normal (ex.: ["18:00","01:00"]).
+  // Deixe null para não mostrar "Aberto/Fechado" (horário ainda não informado).
+  const HORARIO = null;
+  // Exemplo: { 1:["18:00","23:30"], 2:["18:00","23:30"], 3:["18:00","23:30"], 4:["18:00","23:30"], 5:["18:00","23:59"], 6:["18:00","23:59"] }
+  // ========================
+
+  const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const $ = s => document.querySelector(s);
+  const itens = {};           // id -> {n,nome,desc,preco}
+  const qtd = {};             // id -> quantidade
+
+  const ESG = (lerLoja().esgotados || []);
+
+  // Renderiza cardápio
+  $("#menu").innerHTML = CATEGORIAS.map(c => `<a href="#${c.id}">${c.nome}</a>`).join("") + `<a href="#entrega">Entrega</a>`;
+  $("#cardapio").innerHTML = CATEGORIAS.map(c => `
+    <section id="${c.id}">
+      <h2 class="titulo">${c.nome}</h2>
+      ${c.itens.map(([n,nome,desc,preco]) => {
+        const id = c.id + "-" + n;
+        itens[id] = { n, nome, desc, preco, cat:c.nome, esg:ESG.includes(id) };
+        return `<div class="item${ESG.includes(id) ? " esgotado" : ""}" data-busca="${norm(c.nome+" "+n+" "+nome+" "+desc)}">
+          <div class="info">
+            <h3><span>${String(n).padStart(2,"0")}</span>${nome}</h3>
+            ${desc ? `<p>${desc}</p>` : ""}
+            <div class="preco">${brl(preco)}</div>
+          </div>
+          <div class="qtd" id="q-${id}">
+            <button class="menos" data-id="${id}" data-d="-1" aria-label="Remover">−</button>
+            <b>0</b>
+            <button data-id="${id}" data-d="1" aria-label="Adicionar">+</button>
+          </div>
+        </div>`;
+      }).join("")}
+    </section>`).join("");
+
+  $("#taxas").innerHTML = TAXAS.map(([b,v]) => `<li><span>${b}</span><span>${brl(v)}</span></li>`).join("");
+  $("#bairro").innerHTML = TAXAS.map(([b,v],i) => `<option value="${i}">${b} — ${brl(v)}</option>`).join("");
+
+  // Carrinho
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-id]");
+    if (!b) return;
+    const id = b.dataset.id;
+    if (itens[id] && itens[id].esg) return;
+    qtd[id] = Math.max(0, (qtd[id]||0) + Number(b.dataset.d));
+    if (!qtd[id]) delete qtd[id];
+    atualizar();
+  });
+
+  const lista = () => Object.keys(qtd).map(id => ({ id, ...itens[id], q:qtd[id] }));
+  const subtotal = () => lista().reduce((s,i) => s + i.preco*i.q, 0);
+  const taxa = () => $("#tipo").value === "entrega" ? TAXAS[$("#bairro").value][1] : 0;
+
+  function atualizar() {
+    syncMods();
+    for (const id in itens) {
+      const el = $("#q-"+id), q = qtd[id]||0;
+      if (!el) continue;
+      el.classList.toggle("on", q>0);
+      el.querySelector("b").textContent = q;
+    }
+    const n = lista().reduce((s,i)=>s+i.q,0);
+    $("#qtdTotal").textContent = n + (n===1 ? " item" : " itens");
+    $("#subtotal").textContent = brl(subtotal());
+    $("#barra").classList.toggle("on", n>0);
+    document.querySelectorAll("[data-dest]").forEach(b => {
+      const q = qtd[b.dataset.dest]||0;
+      b.textContent = q ? `✓ ${q} no pedido (+1)` : "+ Adicionar";
+    });
+    salvar();
+    if ($("#dlg").open) montarUnidades();
+  }
+
+  function resumo() {
+    const ent = $("#tipo").value === "entrega";
+    $("#blocoEntrega").style.display = ent ? "" : "none";
+    $("#blocoTroco").style.display = $("#pag").value === "Dinheiro" ? "" : "none";
+    const l = lista();
+    $("#resumo").innerHTML = l.length
+      ? `<div><span>Subtotal</span><span>${brl(subtotal())}</span></div>`
+        + `<div><span>Taxa de entrega</span><span>${ent ? brl(taxa()) : "—"}</span></div>`
+        + `<div class="tot"><span>Total</span><span>${brl(subtotal()+taxa())}</span></div>`
+        + `<span class="nota">Alterações no lanche são confirmadas pela loja.</span>`
+      : "";
+    $("#resumo").style.display = l.length ? "" : "none";
+    const fechada = lojaFechada();
+    $("#avisoFechada").style.display = fechada ? "" : "none";
+    const ok = !fechada && l.length && $("#nome").value.trim() && (!ent || $("#end").value.trim());
+    $("#enviar").disabled = !ok;
+  }
+
+  $("#abrir").onclick = () => { $("#dlg").showModal(); montarUnidades(); };
+  $("#fechar").onclick = () => $("#dlg").close();
+  $("#dlg").addEventListener("click", e => { if (e.target === $("#dlg")) $("#dlg").close(); });
+  $("#dlg").addEventListener("input", resumo);
+  $("#dlg").addEventListener("change", resumo);
+
+  $("#enviar").onclick = () => {
+    const ent = $("#tipo").value === "entrega";
+    const linhas = [
+      "Olá! Gostaria de fazer um pedido 🍔", "",
+      "*Itens:*",
+      ...lista().flatMap(i => i.cat==="Bebidas"
+        ? [`• ${i.q}x ${i.nome} — ${brl(i.preco*i.q)}`]
+        : (mods[i.id]||[]).map(u => `• ${i.n} - ${i.nome} (${i.cat}) — ${brl(i.preco)}` + descMod(u))),
+      "",
+      `*Subtotal:* ${brl(subtotal())}`,
+      ent ? `*Taxa de entrega (${TAXAS[$("#bairro").value][0]}):* ${brl(taxa())}` : "*Retirada no local*",
+      `*Total:* ${brl(subtotal()+taxa())}`,
+      "",
+      `*Nome:* ${$("#nome").value.trim()}`,
+      ent ? `*Endereço:* ${$("#end").value.trim()} — ${TAXAS[$("#bairro").value][0]}` : null,
+      `*Pagamento:* ${$("#pag").value}` + ($("#pag").value==="Dinheiro" && $("#troco").value.trim() ? ` (troco para ${$("#troco").value.trim()})` : ""),
+      $("#obs").value.trim() ? `*Obs.:* ${$("#obs").value.trim()}` : null
+    ].filter(l => l !== null);
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(linhas.join("\n"))}`, "_blank");
+  };
+
+  // ===== Personalização por lanche =====
+  const mods = {};   // id -> [{ sem:[], txt:"" }, ...] (um por unidade pedida)
+  const PADRAO = ["alface","tomate","milho","batata palha"];
+
+  function syncMods() {
+    for (const id in qtd) {
+      if (itens[id].cat === "Bebidas") continue;
+      mods[id] = mods[id] || [];
+      while (mods[id].length < qtd[id]) mods[id].push({ sem:[], txt:"" });
+      mods[id].length = qtd[id];
+    }
+    for (const id in mods) if (!qtd[id]) delete mods[id];
+  }
+  function salvar() {
+    try { localStorage.setItem("cl_carrinho", JSON.stringify(qtd)); localStorage.setItem("cl_mods", JSON.stringify(mods)); } catch(e) {}
+  }
+  function ingredientes(i) {
+    const da = (i.desc||"").split(/,\s*| e /i).map(x => x.trim().toLowerCase().replace(/^\d+\s+/,""))
+      .filter(x => x && x !== "pão" && !/^(bife|filé|pedaço)/.test(x));
+    return [...new Set([...da, ...PADRAO])];
+  }
+  function descMod(u) {
+    const partes = [...u.sem.map(s => "sem " + s)];
+    if (u.txt.trim()) partes.push(u.txt.trim());
+    return partes.length ? "\n   ↳ " + partes.join("; ") : "";
+  }
+  function montarUnidades() {
+    const l = lista();
+    if (!l.length) { $("#unidades").innerHTML = `<div class="resumo vazio">Seu pedido está vazio.</div>`; resumo(); return; }
+    $("#unidades").innerHTML = l.map(i => {
+      if (i.cat === "Bebidas") return `<div class="un"><div class="un-t"><b>${i.q}x ${i.nome}</b><span>${brl(i.preco*i.q)}</span>
+        <span class="qm"><button data-id="${i.id}" data-d="-1" aria-label="Remover">−</button><button data-id="${i.id}" data-d="1" aria-label="Adicionar">+</button></span></div></div>`;
+      const chips = ingredientes(i);
+      return mods[i.id].map((u,k) => `<div class="un">
+        <div class="un-t"><b>${i.n} - ${i.nome}${i.q>1 ? ` <small>(${k+1} de ${i.q})</small>` : ""}</b><span>${brl(i.preco)}</span>
+          <button type="button" class="rm" data-rm="${i.id}" data-k="${k}" aria-label="Remover este lanche">🗑</button></div>
+        <div class="chips">${chips.map(c => `<button type="button" class="chip${u.sem.includes(c) ? " on" : ""}" data-u="${i.id}" data-k="${k}" data-c="${c}">sem ${c}</button>`).join("")}</div>
+      </div>`).join("");
+    }).join("");
+    resumo();
+  }
+  $("#unidades").addEventListener("click", e => {
+    const c = e.target.closest(".chip");
+    if (c) {
+      const u = mods[c.dataset.u][+c.dataset.k], i = u.sem.indexOf(c.dataset.c);
+      if (i >= 0) u.sem.splice(i,1); else u.sem.push(c.dataset.c);
+      c.classList.toggle("on"); salvar(); return;
+    }
+    const r = e.target.closest("[data-rm]");
+    if (r) {
+      const id = r.dataset.rm;
+      mods[id].splice(+r.dataset.k, 1);
+      qtd[id]--; if (!qtd[id]) delete qtd[id];
+      atualizar();
+    }
+  });
+  $("#unidades").addEventListener("input", e => {
+    const t = e.target.closest(".obsu");
+    if (t) { mods[t.dataset.u][+t.dataset.k].txt = t.value; salvar(); }
+  });
+
+  // ===== Extras =====
+  function norm(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
+
+  // Destaques
+  const dIds = DESTAQUES.filter(id => itens[id] && !itens[id].esg);
+  if (dIds.length) {
+    $("#destaques").innerHTML = `<h2 class="titulo">Destaques</h2><div class="dest">` + dIds.map(id => {
+      const i = itens[id];
+      return `<div class="dcard"><h3>${i.nome}</h3><p>${i.desc}</p><div class="preco">${brl(i.preco)}</div>
+        <button class="btn" data-id="${id}" data-d="1" data-dest="${id}">+ Adicionar</button></div>`;
+    }).join("") + `</div>`;
+    $("#menu").insertAdjacentHTML("afterbegin", `<a href="#destaques">Destaques</a>`);
+  } else { $("#destaques").style.display = "none"; }
+
+  // Busca
+  $("#busca").addEventListener("input", () => {
+    const t = norm($("#busca").value.trim());
+    let achou = 0;
+    document.querySelectorAll("#cardapio section").forEach(sec => {
+      let v = 0;
+      sec.querySelectorAll(".item").forEach(it => {
+        const ok = !t || it.dataset.busca.includes(t);
+        it.style.display = ok ? "" : "none";
+        if (ok) v++;
+      });
+      sec.style.display = v ? "" : "none";
+      achou += v;
+    });
+    if (dIds.length) $("#destaques").style.display = t ? "none" : "";
+    $("#semResultado").style.display = achou ? "none" : "block";
+  });
+
+  // Aberto / fechado (lê o que o funcionário configurou em admin.html)
+  function lerLoja() { try { return JSON.parse(localStorage.getItem("cl_loja") || "{}"); } catch(e) { return {}; } }
+  function lojaFechada() { const c = lerLoja(); return !!c.fechado && (!c.ate || Date.now() < c.ate); }
+  function statusLoja() {
+    const cfg = lerLoja(), H = HORARIO, el = $("#status");
+    if (lojaFechada()) {
+      el.className = "";
+      el.textContent = "";
+      el.insertAdjacentHTML("afterbegin", "<i></i>");
+      el.append("Fechado" + (cfg.msg ? " · " + cfg.msg : " no momento") + (cfg.ate ? " · volta às " + new Date(cfg.ate).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) : ""));
+      return;
+    }
+    if (!H) { el.textContent = ""; el.className = ""; return; }
+    const ag = new Date(), dia = ag.getDay(), min = ag.getHours()*60 + ag.getMinutes();
+    const m = h => { const [x,y] = h.split(":"); return +x*60 + +y; };
+    const hoje = H[dia], ontem = H[(dia+6)%7];
+    let aberto = false;
+    if (hoje) { const x = m(hoje[0]), f = m(hoje[1]); aberto = f > x ? (min >= x && min < f) : min >= x; }
+    if (!aberto && ontem) { const x = m(ontem[0]), f = m(ontem[1]); if (f < x && min < f) aberto = true; }
+    el.className = aberto ? "aberto" : "";
+    el.innerHTML = `<i></i>${aberto ? "Aberto agora" : "Fechado no momento"}` + (hoje ? ` · hoje ${hoje[0]} às ${hoje[1]}` : " · hoje não abrimos");
+  }
+  statusLoja(); setInterval(statusLoja, 60000);
+
+  // Lembra pedido e dados do cliente
+  try {
+    const salvo = JSON.parse(localStorage.getItem("cl_carrinho") || "{}");
+    for (const id in salvo) if (itens[id] && !itens[id].esg && salvo[id] > 0) qtd[id] = salvo[id];
+    const ms = JSON.parse(localStorage.getItem("cl_mods") || "{}");
+    for (const id in ms) if (qtd[id] && Array.isArray(ms[id])) mods[id] = ms[id].map(u => ({ sem:Array.isArray(u.sem)?u.sem:[], txt:String(u.txt||"") }));
+    const d = JSON.parse(localStorage.getItem("cl_dados") || "{}");
+    if (d.nome) $("#nome").value = d.nome;
+    if (d.end) $("#end").value = d.end;
+    if (d.bairro && TAXAS[d.bairro]) $("#bairro").value = d.bairro;
+  } catch(e) {}
+  $("#dlg").addEventListener("input", () => {
+    try { localStorage.setItem("cl_dados", JSON.stringify({ nome:$("#nome").value, end:$("#end").value, bairro:$("#bairro").value })); } catch(e) {}
+  });
+  atualizar();
+</script>
+</body>
+</html>

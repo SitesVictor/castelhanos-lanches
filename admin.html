@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Painel — Castelhanos Lanches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --verm:#8b1a1a; --verm2:#a82424; --laranja:#e8731a; --creme:#fbf1d9; --texto:#2b1210; --verde:#1f9d55; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Nunito',system-ui,sans-serif; background:var(--creme); color:var(--texto); min-height:100vh; padding-bottom:5.5rem; }
+  h1,h2 { font-family:'Bebas Neue',Impact,sans-serif; font-weight:400; letter-spacing:.03em; }
+
+  /* topo */
+  .topo { background:linear-gradient(160deg,var(--laranja),#c9560d); color:#fff; padding:1rem 1rem 3.2rem; }
+  .topo .in { max-width:560px; margin:0 auto; display:flex; align-items:center; gap:.8rem; }
+  .topo svg { width:44px; height:44px; flex:none; }
+  .topo h1 { font-size:1.7rem; line-height:1; text-shadow:0 2px 0 var(--verm); }
+  .topo small { display:block; font-weight:700; opacity:.9; letter-spacing:.15em; font-size:.65rem; text-transform:uppercase; }
+  .topo .sair { margin-left:auto; background:rgba(0,0,0,.25); color:#fff; border:0; border-radius:999px; padding:.45rem .9rem; font:800 .8rem 'Nunito',sans-serif; cursor:pointer; }
+
+  main { max-width:560px; margin:-2.4rem auto 0; padding:0 1rem; }
+  .card { background:#fff; border-radius:18px; padding:1.1rem; margin-bottom:1rem; box-shadow:0 8px 24px -12px rgba(139,26,26,.45); }
+  .card h2 { font-size:1.35rem; color:var(--verm); margin-bottom:.5rem; }
+  .sub { font-size:.85rem; opacity:.75; }
+
+  /* login */
+  #login { max-width:420px; margin:2rem auto; padding:1.4rem; }
+  #login h2 { font-size:1.8rem; }
+  input[type=text], input[type=password], input[type=search] { width:100%; padding:.8rem .9rem; margin:.35rem 0; border:2px solid #e8d3ad; border-radius:12px; font:inherit; background:#fff; }
+  input:focus { outline:none; border-color:var(--laranja); }
+  .senha { position:relative; }
+  .senha button { position:absolute; right:.5rem; top:50%; transform:translateY(-50%); background:none; border:0; font-size:1.1rem; cursor:pointer; }
+  .erro { color:var(--verm2); font-weight:800; font-size:.9rem; min-height:1.2rem; margin-top:.4rem; }
+
+  .btn { border:0; border-radius:14px; padding:.95rem 1.2rem; font:800 1rem 'Nunito',sans-serif; cursor:pointer; background:var(--verm); color:#fff; width:100%; margin-top:.5rem; transition:transform .1s; }
+  .btn:active { transform:scale(.98); }
+  .btn.verde { background:var(--verde); }
+  .btn.claro { background:#f1e6cc; color:var(--texto); }
+
+  /* status */
+  .status { text-align:center; padding:1.4rem 1rem; border-radius:18px; color:#fff; margin-bottom:1rem; box-shadow:0 8px 24px -12px rgba(0,0,0,.5); }
+  .status.ab { background:linear-gradient(160deg,#2bb673,#16854f); }
+  .status.fe { background:linear-gradient(160deg,#c0392b,#8b1a1a); }
+  .status .pulso { width:14px; height:14px; border-radius:50%; background:#fff; display:inline-block; margin-right:.5rem; animation:pulso 1.6s infinite; }
+  .status .grande { font-family:'Bebas Neue',Impact,sans-serif; font-size:2.2rem; letter-spacing:.04em; line-height:1.1; }
+  .status p { opacity:.92; font-weight:700; margin-top:.25rem; }
+  .status .btn { background:#fff; color:var(--texto); width:auto; padding:.8rem 1.6rem; margin-top:1rem; }
+  @keyframes pulso { 0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)} 70%{box-shadow:0 0 0 10px rgba(255,255,255,0)} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0)} }
+
+  /* chips */
+  .rotulo { font-weight:800; font-size:.85rem; margin:.9rem 0 .4rem; }
+  .chips { display:flex; flex-wrap:wrap; gap:.45rem; }
+  .chip { border:2px solid #e8d3ad; background:#fff; border-radius:999px; padding:.5rem .95rem; font:800 .85rem 'Nunito',sans-serif; color:var(--texto); cursor:pointer; }
+  .chip.on { background:var(--verm); border-color:var(--verm); color:#fff; }
+
+  /* cardápio */
+  .cat { font-family:'Bebas Neue',Impact,sans-serif; font-size:1.2rem; color:var(--verm); margin:1rem 0 .3rem; }
+  .linha { display:flex; align-items:center; gap:.7rem; padding:.65rem 0; border-bottom:1px dashed #e0c9a8; }
+  .linha .nm { flex:1; min-width:0; font-weight:700; font-size:.92rem; }
+  .linha .nm span { color:var(--laranja); margin-right:.3rem; }
+  .linha.esg .nm { opacity:.5; text-decoration:line-through; }
+  .sw { position:relative; width:52px; height:30px; flex:none; }
+  .sw input { opacity:0; width:100%; height:100%; position:absolute; margin:0; cursor:pointer; z-index:1; }
+  .sw i { position:absolute; inset:0; background:#c0392b; border-radius:999px; transition:.2s; }
+  .sw i::after { content:""; position:absolute; width:24px; height:24px; background:#fff; border-radius:50%; top:3px; left:3px; transition:.2s; }
+  .sw input:checked + i { background:var(--verde); }
+  .sw input:checked + i::after { transform:translateX(22px); }
+
+  /* histórico */
+  .log { padding:.6rem 0; border-bottom:1px dashed #e0c9a8; font-size:.9rem; }
+  .log small { display:block; opacity:.65; font-weight:700; }
+  .vazio { text-align:center; opacity:.6; padding:1rem; font-weight:700; }
+
+  /* navegação */
+  nav { position:fixed; left:0; right:0; bottom:0; background:#fff; display:flex; box-shadow:0 -4px 14px rgba(0,0,0,.12); z-index:10; }
+  nav button { flex:1; background:none; border:0; padding:.7rem .3rem .6rem; font:800 .72rem 'Nunito',sans-serif; color:#8a7a70; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:.15rem; }
+  nav button span { font-size:1.35rem; line-height:1; }
+  nav button.on { color:var(--verm); }
+
+  .toast { position:fixed; left:50%; bottom:5.5rem; transform:translateX(-50%) translateY(20px); background:#2b1210; color:#fff; padding:.7rem 1.2rem; border-radius:999px; font-weight:800; font-size:.88rem; opacity:0; pointer-events:none; transition:.25s; z-index:30; }
+  .toast.on { opacity:1; transform:translateX(-50%); }
+  .aviso { font-size:.78rem; opacity:.7; text-align:center; margin:.5rem 0 1rem; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="card" hidden>
+  <h2>Painel da loja</h2>
+  <p class="sub">Castelhanos Lanches</p>
+  <input type="text" id="usuario" placeholder="Usuário" autocomplete="username" autocapitalize="none">
+  <div class="senha">
+    <input type="password" id="pin" placeholder="Senha" autocomplete="current-password">
+    <button type="button" id="ver" aria-label="Mostrar senha">👁</button>
+  </div>
+  <button class="btn" id="entrar">Entrar</button>
+  <p class="erro" id="erro"></p>
+</div>
+
+<!-- PAINEL -->
+<div id="painel" hidden>
+  <div class="topo">
+    <div class="in">
+      <svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 46c0-16 14-26 32-26s32 10 32 26z"/><path d="M14 56h72M20 66c6 0 6 5 12 5s6-5 12-5 6 5 12 5 6-5 12-5 6 5 10 5"/><path d="M20 80c0 6 5 8 10 8h40c5 0 10-2 10-8z"/>
+      </svg>
+      <div><h1>Castelhanos</h1><small>Painel da loja</small></div>
+      <button class="sair" id="sair">Sair</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- ABA LOJA -->
+    <section id="aba-loja">
+      <div class="status" id="status"></div>
+
+      <div class="card" id="fecharForm" hidden>
+        <h2>Fechar a loja</h2>
+        <div class="rotulo">Por quanto tempo?</div>
+        <div class="chips" id="tempo">
+          <button class="chip" data-t="30">30 min</button>
+          <button class="chip" data-t="60">1 hora</button>
+          <button class="chip" data-t="120">2 horas</button>
+          <button class="chip" data-t="hoje">Só hoje</button>
+          <button class="chip" data-t="sempre">Até eu reabrir</button>
+        </div>
+        <div class="rotulo">Motivo (o cliente vê)</div>
+        <div class="chips" id="motivos">
+          <button class="chip">Voltamos em breve</button>
+          <button class="chip">Imprevisto</button>
+          <button class="chip">Chuva forte</button>
+          <button class="chip">Falta de ingredientes</button>
+          <button class="chip">Feriado</button>
+        </div>
+        <input type="text" id="msg" maxlength="60" placeholder="Ou escreva o aviso aqui">
+        <button class="btn" id="confirmar">Confirmar fechamento</button>
+        <button class="btn claro" id="cancelar">Cancelar</button>
+      </div>
+      <p class="aviso">Os dias e horários normais ficam definidos no site. Aqui entram só as exceções.</p>
+    </section>
+
+    <!-- ABA CARDÁPIO -->
+    <section id="aba-cardapio" hidden>
+      <div class="card">
+        <h2>Disponibilidade dos lanches</h2>
+        <p class="sub">Desligue o que acabou. O cliente vê "Esgotado" e não consegue pedir.</p>
+        <input type="search" id="busca" placeholder="Buscar lanche…">
+        <button class="btn claro" id="todos">Marcar todos como disponíveis</button>
+        <div id="lista"></div>
+      </div>
+    </section>
+
+    <!-- ABA HISTÓRICO -->
+    <section id="aba-hist" hidden>
+      <div class="card">
+        <h2>Últimas ações</h2>
+        <div id="hist"></div>
+      </div>
+    </section>
+
+    <p class="aviso">As alterações ficam salvas só neste aparelho e navegador.</p>
+  </main>
+
+  <nav>
+    <button class="on" data-aba="loja"><span>🏪</span>Loja</button>
+    <button data-aba="cardapio"><span>🍔</span>Cardápio</button>
+    <button data-aba="hist"><span>🕒</span>Histórico</button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="dados.js"></script>
+<script>
+  // ===== CONFIGURAÇÃO =====
+  const USUARIO = "admin";
+  const SENHA = "Hamburguer123"; // proteção simples: fica visível no código, não é segurança forte
+  // ========================
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const ler = () => { try { return JSON.parse(localStorage.getItem("cl_loja") || "{}"); } catch(e) { return {}; } };
+  const gravar = c => { try { localStorage.setItem("cl_loja", JSON.stringify(c)); } catch(e) { alert("Não foi possível salvar neste navegador."); } };
+  const hora = ts => new Date(ts).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
+  const dataHora = ts => new Date(ts).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+  function toast(t) { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.remove("on"), 2200); }
+  function registrar(c, txt) { c.log = [{ t:Date.now(), txt }, ...(c.log || [])].slice(0, 40); }
+  const fechada = c => !!c.fechado && (!c.ate || Date.now() < c.ate);
+
+  // ----- login -----
+  function mostrar(logado) { $("#login").hidden = logado; $("#painel").hidden = !logado; if (logado) desenhar(); }
+  function entrar() {
+    if ($("#usuario").value.trim().toLowerCase() !== USUARIO || $("#pin").value !== SENHA) { $("#erro").textContent = "Usuário ou senha incorretos."; return; }
+    try { sessionStorage.setItem("cl_adm", "1"); } catch(e) {}
+    $("#erro").textContent = ""; mostrar(true);
+  }
+  $("#entrar").onclick = entrar;
+  $("#pin").addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
+  $("#ver").onclick = () => { const p = $("#pin"); p.type = p.type === "password" ? "text" : "password"; };
+  $("#sair").onclick = () => { try { sessionStorage.removeItem("cl_adm"); } catch(e) {} $("#pin").value = ""; mostrar(false); };
+  let logado = false; try { logado = !!sessionStorage.getItem("cl_adm"); } catch(e) {}
+  mostrar(logado);
+
+  // ----- abas -----
+  $$("nav button").forEach(b => b.onclick = () => {
+    $$("nav button").forEach(x => x.classList.toggle("on", x === b));
+    ["loja","cardapio","hist"].forEach(a => $("#aba-"+a).hidden = a !== b.dataset.aba);
+    desenhar();
+  });
+
+  // ----- status / fechar -----
+  let tempo = null;
+  function desenharStatus() {
+    const c = ler(), f = fechada(c), el = $("#status");
+    el.className = "status " + (f ? "fe" : "ab");
+    if (f) {
+      el.innerHTML = `<div class="grande"><span class="pulso"></span>Loja fechada</div>`
+        + `<p>${c.msg ? esc(c.msg) : "Sem pedidos no momento"}</p>`
+        + `<p>${c.ate ? "Reabre sozinha às " + hora(c.ate) : "Fica fechada até você reabrir"}</p>`
+        + `<button class="btn" id="reabrir">Reabrir agora</button>`;
+      $("#reabrir").onclick = () => { const n = ler(); n.fechado = false; delete n.ate; delete n.msg; registrar(n, "Reabriu a loja"); gravar(n); toast("Loja reaberta ✓"); desenhar(); };
+      $("#fecharForm").hidden = true;
+    } else {
+      el.innerHTML = `<div class="grande"><span class="pulso"></span>Recebendo pedidos</div><p>A loja está aberta para os clientes</p>`
+        + `<button class="btn" id="abrirForm">Fechar a loja…</button>`;
+      $("#abrirForm").onclick = () => { $("#fecharForm").hidden = false; $("#fecharForm").scrollIntoView({ behavior:"smooth", block:"center" }); };
+    }
+  }
+  $("#tempo").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    $$("#tempo .chip").forEach(x => x.classList.toggle("on", x === b)); tempo = b.dataset.t;
+  });
+  $("#motivos").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    $$("#motivos .chip").forEach(x => x.classList.toggle("on", x === b)); $("#msg").value = b.textContent;
+  });
+  $("#msg").addEventListener("input", () => $$("#motivos .chip").forEach(x => x.classList.remove("on")));
+  $("#cancelar").onclick = () => { $("#fecharForm").hidden = true; };
+  $("#confirmar").onclick = () => {
+    if (!tempo) { toast("Escolha por quanto tempo"); return; }
+    const c = ler(), msg = $("#msg").value.trim();
+    c.fechado = true; c.msg = msg; delete c.ate;
+    let rotulo = "até reabrir";
+    if (tempo === "hoje") { const f = new Date(); f.setHours(24,0,0,0); c.ate = f.getTime(); rotulo = "só hoje"; }
+    else if (tempo !== "sempre") { c.ate = Date.now() + Number(tempo) * 60000; rotulo = tempo === "60" ? "1 hora" : tempo === "120" ? "2 horas" : tempo + " min"; }
+    registrar(c, `Fechou a loja (${rotulo})` + (msg ? ` — ${msg}` : ""));
+    gravar(c); tempo = null; $("#msg").value = ""; $$(".chip").forEach(x => x.classList.remove("on"));
+    $("#fecharForm").hidden = true; toast("Loja fechada ✓"); desenhar();
+  };
+
+  // ----- cardápio -----
+  function desenharLista() {
+    const c = ler(), esg = c.esgotados || [], t = $("#busca").value.trim().toLowerCase();
+    let html = "", n = 0;
+    CATEGORIAS.forEach(cat => {
+      const itens = cat.itens.filter(([num, nome]) => !t || (nome + " " + num).toLowerCase().includes(t));
+      if (!itens.length) return;
+      html += `<div class="cat">${esc(cat.nome)}</div>` + itens.map(([num, nome]) => {
+        const id = cat.id + "-" + num, ok = !esg.includes(id); n++;
+        return `<div class="linha ${ok ? "" : "esg"}"><div class="nm"><span>${String(num).padStart(2,"0")}</span>${esc(nome)}</div>
+          <label class="sw"><input type="checkbox" data-id="${id}" data-nome="${esc(nome)}" ${ok ? "checked" : ""}><i></i></label></div>`;
+      }).join("");
+    });
+    $("#lista").innerHTML = html || `<div class="vazio">Nenhum lanche encontrado.</div>`;
+    $("#todos").hidden = !esg.length;
+    $("#todos").textContent = `Marcar todos como disponíveis (${esg.length} esgotado${esg.length === 1 ? "" : "s"})`;
+  }
+  $("#busca").addEventListener("input", desenharLista);
+  $("#lista").addEventListener("change", e => {
+    const i = e.target.closest("input[data-id]"); if (!i) return;
+    const c = ler(), esg = new Set(c.esgotados || []);
+    if (i.checked) esg.delete(i.dataset.id); else esg.add(i.dataset.id);
+    c.esgotados = [...esg];
+    registrar(c, `${i.dataset.nome} ${i.checked ? "voltou a ficar disponível" : "marcado como esgotado"}`);
+    gravar(c); toast(i.checked ? "Disponível ✓" : "Marcado como esgotado"); desenharLista();
+  });
+  $("#todos").onclick = () => { const c = ler(); c.esgotados = []; registrar(c, "Todos os lanches voltaram a ficar disponíveis"); gravar(c); toast("Tudo disponível ✓"); desenharLista(); };
+
+  // ----- histórico -----
+  function desenharHist() {
+    const l = ler().log || [];
+    $("#hist").innerHTML = l.length ? l.map(x => `<div class="log">${esc(x.txt)}<small>${dataHora(x.t)}</small></div>`).join("") : `<div class="vazio">Nenhuma ação registrada ainda.</div>`;
+  }
+
+  function desenhar() {
+    if ($("#painel").hidden) return;
+    if (!$("#aba-loja").hidden) desenharStatus();
+    if (!$("#aba-cardapio").hidden) desenharLista();
+    if (!$("#aba-hist").hidden) desenharHist();
+  }
+  setInterval(() => { if (!$("#aba-loja").hidden) desenharStatus(); }, 30000);
+</script>
+</body>
+</html>
