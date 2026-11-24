@@ -19,6 +19,8 @@
   .topo svg { width:44px; height:44px; flex:none; }
   .topo h1 { font-size:1.7rem; line-height:1; text-shadow:0 2px 0 var(--verm); }
   .topo small { display:block; font-weight:700; opacity:.9; letter-spacing:.15em; font-size:.65rem; text-transform:uppercase; }
+  .topo #som { margin-left:auto; white-space:nowrap; }
+  .topo #som + .sair { margin-left:.4rem; }
   .topo .sair { margin-left:auto; background:rgba(0,0,0,.25); color:#fff; border:0; border-radius:999px; padding:.45rem .9rem; font:800 .8rem 'Nunito',sans-serif; cursor:pointer; }
 
   main { max-width:560px; margin:-2.4rem auto 0; padding:0 1rem; }
@@ -100,6 +102,8 @@
     .topo h1 { font-size:2.4rem; }
     .topo .sair { position:fixed; left:1.2rem; bottom:1.4rem; width:210px; margin:0; padding:.75rem; background:rgba(255,255,255,.14); font-size:.9rem; }
     .topo .sair:hover { background:rgba(255,255,255,.24); }
+    .topo #som { bottom:4.6rem; }
+    .topo #som + .sair { margin-left:0; }
     nav { position:fixed; left:0; top:215px; bottom:auto; right:auto; width:250px; flex-direction:column; background:transparent; box-shadow:none; padding:0 .9rem; gap:.35rem; z-index:6; }
     nav button { flex-direction:row; justify-content:flex-start; gap:.8rem; padding:.9rem 1rem; font-size:1rem; border-radius:12px; color:rgba(255,255,255,.82); transition:background .15s; }
     nav button span { font-size:1.3rem; }
@@ -166,6 +170,7 @@
         <path d="M18 46c0-16 14-26 32-26s32 10 32 26z"/><path d="M14 56h72M20 66c6 0 6 5 12 5s6-5 12-5 6 5 12 5 6-5 12-5 6 5 10 5"/><path d="M20 80c0 6 5 8 10 8h40c5 0 10-2 10-8z"/>
       </svg>
       <div><h1>Castelhanos</h1><small>Painel da loja</small></div>
+      <button class="sair" id="som" type="button" aria-pressed="true">🔔 Som</button>
       <button class="sair" id="sair">Sair</button>
     </div>
   </div>
@@ -384,6 +389,24 @@
     $("#hist").innerHTML = l.length ? l.map(x => `<div class="log">${esc(x.txt)}<small>${dataHora(x.t)}</small></div>`).join("") : `<div class="vazio">Nenhuma ação registrada ainda.</div>`;
   }
 
+
+  // ----- aviso sonoro de novo pedido -----
+  let somOn = true; try { somOn = localStorage.getItem("cast_som") !== "0"; } catch(e){}
+  let AC = null;
+  function audioCtx() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch(e){} return AC; }
+  function apito() {
+    if (!somOn) return; const c = audioCtx(); if (!c) return;
+    [0, .28, .56, 1.1, 1.38, 1.66].forEach((t, i) => {
+      const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.value = i % 3 === 2 ? 1175 : 880;
+      g.gain.setValueAtTime(0, c.currentTime + t); g.gain.linearRampToValueAtTime(.35, c.currentTime + t + .02); g.gain.exponentialRampToValueAtTime(.001, c.currentTime + t + .22);
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime + t); o.stop(c.currentTime + t + .25);
+    });
+  }
+  function desenharSom() { const b = $("#som"); b.textContent = somOn ? "🔔 Som" : "🔕 Mudo"; b.setAttribute("aria-pressed", somOn); }
+  $("#som").addEventListener("click", () => { somOn = !somOn; try { localStorage.setItem("cast_som", somOn ? "1" : "0"); } catch(e){} desenharSom(); if (somOn) { audioCtx(); apito(); } });
+  document.addEventListener("click", () => audioCtx(), { once: true });
+  desenharSom();
+
   // ----- pedidos -----
   const brl = v => Number(v||0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
   const ymd = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
@@ -397,7 +420,7 @@
     refPed = DB.ref("pedidos").orderByChild("ts").startAt(ini).endAt(fim);
     refPed.on("value", snap => {
       const novo = snap.val() || {};
-      if (!primeira && Object.keys(novo).length > Object.keys(PEDS).length && $("#dia").value === ymd(new Date())) toast("🔔 Novo pedido!");
+      if (!primeira && Object.keys(novo).length > Object.keys(PEDS).length && $("#dia").value === ymd(new Date())) { toast("🔔 Novo pedido!"); apito(); }
       primeira = false; PEDS = novo; desenharPedidos();
     }, () => { $("#pedidos").innerHTML = `<div class="vazio">Não foi possível carregar os pedidos.</div>`; });
   }
